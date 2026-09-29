@@ -18,7 +18,7 @@ namespace WindowsFormsApp1
         }
         public override string ToString()
         {
-            return color + " " + valor
+            return color + " " + valor;
         }
     }
 }
