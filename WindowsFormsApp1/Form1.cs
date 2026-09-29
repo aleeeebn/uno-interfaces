@@ -12,9 +12,18 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
+        private Partida partida;
         public Form1()
         {
+            partida = new Partida();
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(partida.getMazo().getMazoSize().ToString());
+            //MessageBox.Show(partida.getMazo().getCarta(0).ToString());
+            //partida.getMazo().barajear();
         }
     }
 }

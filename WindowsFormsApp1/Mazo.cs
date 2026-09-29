@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,6 +29,10 @@ namespace WindowsFormsApp1
         {
             return this.cartas[i];
         }
+        public int getMazoSize()
+        {
+            return cartas.Count();
+        }
         public void removeCarta(int i)
         {
             this.cartas.RemoveAt(i);
@@ -38,16 +43,20 @@ namespace WindowsFormsApp1
             {
                 Carta nuevaCartaRoja = new Carta("Rojo", i);
                 cartas.Add(nuevaCartaRoja);
-                cartas.Add(nuevaCartaRoja);
+                Carta nuevaCartaRoja2 = new Carta("Rojo", i);
+                cartas.Add(nuevaCartaRoja2);
                 Carta nuevaCartaAzul = new Carta("Azul", i);
                 cartas.Add(nuevaCartaAzul);
-                cartas.Add(nuevaCartaAzul);
+                Carta nuevaCartaAzul2 = new Carta("Azul", i);
+                cartas.Add(nuevaCartaAzul2);
                 Carta nuevaCartaVerde = new Carta("Verde", i);
                 cartas.Add(nuevaCartaVerde);
-                cartas.Add(nuevaCartaVerde);
+                Carta nuevaCartaVerde2 = new Carta("Verde", i);
+                cartas.Add(nuevaCartaVerde2);
                 Carta nuevaCartaAmarilla = new Carta("Amarilla", i);
                 cartas.Add(nuevaCartaAmarilla);
-                cartas.Add(nuevaCartaAmarilla);
+                Carta nuevaCartaAmarilla2 = new Carta("Amarilla", i);
+                cartas.Add(nuevaCartaAmarilla2);
 
                 cant += 8;
             }
@@ -61,12 +70,12 @@ namespace WindowsFormsApp1
                 cant += 2;
             }
         }
-        private void barajear()
+        public void barajear()
         {
             for(int i = 0; i < cant; i++)
             {
                 Random random = new Random();
-                int cartaAleatoria = random.Next(0, cant + 1);
+                int cartaAleatoria = random.Next(0, cant);
                 Carta temp = this.getCarta(i);
                 cartas[i] = cartas[cartaAleatoria];
                 cartas[cartaAleatoria] = temp;

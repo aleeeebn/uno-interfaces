@@ -23,6 +23,10 @@ namespace WindowsFormsApp1
             agregarJugadoresDefault();
             repartir();
         }
+        public Mazo getMazo()
+        {
+            return this.mazo;
+        }
         private void agregarJugadoresDefault()
         {
             for(int i = 0; i < CANTIDADJUGADORESDEFAULT; i++)
