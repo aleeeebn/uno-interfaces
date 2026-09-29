@@ -38,7 +38,7 @@ namespace WindowsFormsApp1
                 for(int i = 0; i < CANTIDADCARTASPORJUGADOR; i++)
                 {
                     Random random = new Random();
-                    int cartaSeleccionada = random.Next(0, cantTotalCartas);
+                    int cartaSeleccionada = random.Next(0, cantTotalCartas + 1);
                     jugador.añadirCarta(mazo.getCarta(cartaSeleccionada));
                     juego.añadirCartas(mazo.getCarta(cartaSeleccionada));
                     mazo.removeCarta(cartaSeleccionada);

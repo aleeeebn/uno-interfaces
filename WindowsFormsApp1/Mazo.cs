@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WindowsFormsApp1
 {
@@ -17,6 +18,7 @@ namespace WindowsFormsApp1
             cant = 0;
             cartas = new List<Carta>();
             mazoDefault();
+            barajear();
         }
         public int getCantCartas()
         {
@@ -57,6 +59,17 @@ namespace WindowsFormsApp1
                 cartas.Add(nuevaCartaComeCuatro);
 
                 cant += 2;
+            }
+        }
+        private void barajear()
+        {
+            for(int i = 0; i < cant; i++)
+            {
+                Random random = new Random();
+                int cartaAleatoria = random.Next(0, cant + 1);
+                Carta temp = this.getCarta(i);
+                cartas[i] = cartas[cartaAleatoria];
+                cartas[cartaAleatoria] = temp;
             }
         }
     }
