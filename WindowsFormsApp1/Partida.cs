@@ -21,13 +21,12 @@ namespace WindowsFormsApp1
             jugadores = new List<Jugador>();
             juego = new CartasJuego();
             agregarJugadoresDefault();
-            repartir();
         }
         public Mazo getMazo()
         {
             return this.mazo;
         }
-        private void agregarJugadoresDefault()
+        public void agregarJugadoresDefault()
         {
             for(int i = 0; i < CANTIDADJUGADORESDEFAULT; i++)
             {
@@ -35,7 +34,7 @@ namespace WindowsFormsApp1
                 jugadores.Add(nuevoJugador);
             }
         }
-        private void repartir()
+        public void repartir()
         {
             foreach(Jugador jugador in jugadores)
             {
@@ -48,6 +47,18 @@ namespace WindowsFormsApp1
                     mazo.removeCarta(cartaSeleccionada);
                     cantTotalCartas--;
                 }
+            }
+        }
+        public void siMazoEstaVacio()
+        {
+            if (mazo.estaVacio())
+            {
+                for(int i = 0; i < juego.getCantidadCartas() - 1; i++)
+                {
+                    mazo.add(juego.getPrimerCarta());
+                    juego.eliminaPrimerCarta();
+                }
+                mazo.barajear();
             }
         }
     }

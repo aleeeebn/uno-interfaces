@@ -37,26 +37,28 @@ namespace WindowsFormsApp1
         {
             this.cartas.RemoveAt(i);
         }
+        public bool estaVacio()
+        {
+            if (this.cartas.Count() == 0)
+                return true;
+            return false;
+        }
         public void mazoDefault()
         {
             for(int i = 0; i < CANTIDAD; i++)
             {
                 Carta nuevaCartaRoja = new Carta("Rojo", i);
                 cartas.Add(nuevaCartaRoja);
-                Carta nuevaCartaRoja2 = new Carta("Rojo", i);
-                cartas.Add(nuevaCartaRoja2);
+                cartas.Add(nuevaCartaRoja);
                 Carta nuevaCartaAzul = new Carta("Azul", i);
                 cartas.Add(nuevaCartaAzul);
-                Carta nuevaCartaAzul2 = new Carta("Azul", i);
-                cartas.Add(nuevaCartaAzul2);
+                cartas.Add(nuevaCartaAzul);
                 Carta nuevaCartaVerde = new Carta("Verde", i);
                 cartas.Add(nuevaCartaVerde);
-                Carta nuevaCartaVerde2 = new Carta("Verde", i);
-                cartas.Add(nuevaCartaVerde2);
+                cartas.Add(nuevaCartaVerde);
                 Carta nuevaCartaAmarilla = new Carta("Amarilla", i);
                 cartas.Add(nuevaCartaAmarilla);
-                Carta nuevaCartaAmarilla2 = new Carta("Amarilla", i);
-                cartas.Add(nuevaCartaAmarilla2);
+                cartas.Add(nuevaCartaAmarilla);
 
                 cant += 8;
             }
@@ -80,6 +82,10 @@ namespace WindowsFormsApp1
                 cartas[i] = cartas[cartaAleatoria];
                 cartas[cartaAleatoria] = temp;
             }
+        }
+        public void add(Carta nuevaCarta)
+        {
+            cartas.Add(nuevaCarta);
         }
     }
 }
