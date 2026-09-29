@@ -23,6 +23,18 @@ namespace WindowsFormsApp1
         {
             this.nombre = nombre;
         }
+        public bool uno()
+        {
+            if (cartas.Count() == 1)
+                return true;
+            return false;
+        }
+        public bool noTieneCartas()
+        {
+            if (cartas.Count == 0)
+                return true;
+            return false;
+        }
         public void añadirCarta(Carta carta)
         {
             cartas.Add(carta);
