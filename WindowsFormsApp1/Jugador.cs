@@ -23,5 +23,9 @@ namespace WindowsFormsApp1
         {
             this.nombre = nombre;
         }
+        public void añadirCarta(Carta carta)
+        {
+            cartas.Add(carta);
+        }
     }
 }

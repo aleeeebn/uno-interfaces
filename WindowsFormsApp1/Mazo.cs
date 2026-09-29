@@ -18,6 +18,18 @@ namespace WindowsFormsApp1
             cartas = new List<Carta>();
             mazoDefault();
         }
+        public int getCantCartas()
+        {
+            return this.cant;
+        }
+        public Carta getCarta(int i)
+        {
+            return this.cartas[i];
+        }
+        public void removeCarta(int i)
+        {
+            this.cartas.RemoveAt(i);
+        }
         public void mazoDefault()
         {
             for(int i = 0; i < CANTIDAD; i++)
