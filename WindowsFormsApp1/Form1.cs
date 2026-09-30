@@ -14,6 +14,7 @@ namespace WindowsFormsApp1
     {
         private Partida partida;
         private bool roboEsteTurno;
+        private string colorActual = null;
         public Form1()
         {
             InitializeComponent();
@@ -46,6 +47,7 @@ namespace WindowsFormsApp1
                 partida.jugarCarta(carta);
                 lblDescarte.Text = carta.ToString();
                 roboEsteTurno = false;
+                
                 actualizarCantidadCartas();
                 mostrarJugadorActual();
             } else
@@ -95,6 +97,34 @@ namespace WindowsFormsApp1
             roboEsteTurno = true;
             partida.robarCarta();
             actualizarCantidadCartas();
+            mostrarJugadorActual();
+        }
+
+        private void btnElegirColor_Click(object sender, EventArgs e)
+        {
+            partida.setColorActual("Rojo");
+            partida.siguienteTurno();
+            mostrarJugadorActual();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            partida.setColorActual("Azul");
+            partida.siguienteTurno();
+            mostrarJugadorActual();
+        }
+
+        private void btnVerde_Click(object sender, EventArgs e)
+        {
+            partida.setColorActual("Verde");
+            partida.siguienteTurno();
+            mostrarJugadorActual();
+        }
+
+        private void btnAmarillo_Click(object sender, EventArgs e)
+        {
+            partida.setColorActual("Amarillo");
+            partida.siguienteTurno();
             mostrarJugadorActual();
         }
     }

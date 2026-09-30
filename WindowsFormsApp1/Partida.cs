@@ -15,6 +15,7 @@ namespace WindowsFormsApp1
         private static int CANTIDADCARTASPORJUGADOR = 7;
         private int cantTotalCartas;
         private int turnoActual;
+        private string colorActual;
         public Partida()
         {
             mazo = new Mazo();
@@ -23,6 +24,10 @@ namespace WindowsFormsApp1
             juego = new CartasJuego();
             turnoActual = 0;
             agregarJugadoresDefault();
+        }
+        public string getColorActual()
+        {
+            return colorActual;
         }
         public Jugador getJugadorActual()
         {
@@ -39,6 +44,10 @@ namespace WindowsFormsApp1
         public CartasJuego getJuego()
         {
             return juego;
+        }
+        public void setColorActual(string color)
+        {
+            colorActual = color;
         }
         public void agregarJugadoresDefault()
         {
@@ -85,6 +94,10 @@ namespace WindowsFormsApp1
         {
             jugadores[turnoActual].removeCarta(carta);
             juego.añadirCartas(carta);
+            if (carta.getColor() != "Comodin")
+            {
+                colorActual = carta.getColor();
+            }
             this.siguienteTurno();
         }
         public bool sePuedeJugar(Carta carta)
@@ -94,7 +107,7 @@ namespace WindowsFormsApp1
                 return true;
             if (carta.getColor() == "Comodin")
                 return true;
-            if (carta.getColor() == cartaActual.getColor())
+            if (carta.getColor() == colorActual)
                 return true;
             if (carta.getValor() == cartaActual.getValor())
                 return true;
@@ -114,6 +127,32 @@ namespace WindowsFormsApp1
                 Carta carta = mazo.getCarta(0);
                 jugadores[turnoActual].añadirCarta(carta);
                 mazo.removeCarta(0);
+            }
+        }
+        public void robarCartas(Jugador jugador, int cantidad)
+        {
+            for(int i = 0; i < cantidad; i++)
+            {
+                siMazoEstaVacio();
+                Carta carta = mazo.getCarta(0);
+                jugador.añadirCarta(carta);
+                mazo.removeCarta(0);
+            }
+        }
+        private void aplicarEfecto(Carta carta)
+        {
+            switch (carta.getValor())
+            {
+                case 10:
+                    break;
+                case 11:
+                    break;
+                case 12:
+                    break;
+                case 13:
+                    break;
+                case 14:
+                    break;
             }
         }
     }

@@ -36,6 +36,10 @@
             this.btnmazo = new System.Windows.Forms.Button();
             this.btnpasar = new System.Windows.Forms.Button();
             this.lblDescarte = new System.Windows.Forms.Label();
+            this.btnRojo = new System.Windows.Forms.Button();
+            this.btnAmarillo = new System.Windows.Forms.Button();
+            this.btnAzul = new System.Windows.Forms.Button();
+            this.btnVerde = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lbljugador1
@@ -113,11 +117,55 @@
             this.lblDescarte.TabIndex = 7;
             this.lblDescarte.Text = "última carta";
             // 
+            // btnRojo
+            // 
+            this.btnRojo.Location = new System.Drawing.Point(586, 271);
+            this.btnRojo.Name = "btnRojo";
+            this.btnRojo.Size = new System.Drawing.Size(75, 23);
+            this.btnRojo.TabIndex = 9;
+            this.btnRojo.Text = "Rojo";
+            this.btnRojo.UseVisualStyleBackColor = true;
+            this.btnRojo.Click += new System.EventHandler(this.btnElegirColor_Click);
+            // 
+            // btnAmarillo
+            // 
+            this.btnAmarillo.Location = new System.Drawing.Point(667, 271);
+            this.btnAmarillo.Name = "btnAmarillo";
+            this.btnAmarillo.Size = new System.Drawing.Size(75, 23);
+            this.btnAmarillo.TabIndex = 10;
+            this.btnAmarillo.Text = "Amarillo";
+            this.btnAmarillo.UseVisualStyleBackColor = true;
+            this.btnAmarillo.Click += new System.EventHandler(this.btnAmarillo_Click);
+            // 
+            // btnAzul
+            // 
+            this.btnAzul.Location = new System.Drawing.Point(505, 271);
+            this.btnAzul.Name = "btnAzul";
+            this.btnAzul.Size = new System.Drawing.Size(75, 23);
+            this.btnAzul.TabIndex = 11;
+            this.btnAzul.Text = "Azul";
+            this.btnAzul.UseVisualStyleBackColor = true;
+            this.btnAzul.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btnVerde
+            // 
+            this.btnVerde.Location = new System.Drawing.Point(424, 271);
+            this.btnVerde.Name = "btnVerde";
+            this.btnVerde.Size = new System.Drawing.Size(75, 23);
+            this.btnVerde.TabIndex = 12;
+            this.btnVerde.Text = "Verde";
+            this.btnVerde.UseVisualStyleBackColor = true;
+            this.btnVerde.Click += new System.EventHandler(this.btnVerde_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnVerde);
+            this.Controls.Add(this.btnAzul);
+            this.Controls.Add(this.btnAmarillo);
+            this.Controls.Add(this.btnRojo);
             this.Controls.Add(this.lblDescarte);
             this.Controls.Add(this.btnpasar);
             this.Controls.Add(this.btnmazo);
@@ -143,6 +191,10 @@
         private System.Windows.Forms.Button btnmazo;
         private System.Windows.Forms.Button btnpasar;
         private System.Windows.Forms.Label lblDescarte;
+        private System.Windows.Forms.Button btnRojo;
+        private System.Windows.Forms.Button btnAmarillo;
+        private System.Windows.Forms.Button btnAzul;
+        private System.Windows.Forms.Button btnVerde;
     }
 }
 
