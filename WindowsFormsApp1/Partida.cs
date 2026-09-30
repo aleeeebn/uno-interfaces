@@ -126,9 +126,14 @@ namespace WindowsFormsApp1
         }
         public void iniciaDescarte()
         {
-            Carta carta = mazo.getCarta(0);
+            int i = 0;
+            while(mazo.getCarta(i).getValor() > 9)
+            {
+                i++;
+            }
+            Carta carta = mazo.getCarta(i);
             juego.añadirCartas(carta);
-            mazo.removeCarta(0);
+            mazo.removeCarta(i);
             if(carta.getColor() != "Comodin")
             {
                 colorActual = carta.getColor();
@@ -170,10 +175,6 @@ namespace WindowsFormsApp1
                 case 12:
                     siguienteTurno();
                     siguienteTurno();
-                    break;
-                case 13:
-                    break;
-                case 14:
                     break;
                 default:
                     siguienteTurno();
