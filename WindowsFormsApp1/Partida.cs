@@ -84,6 +84,7 @@ namespace WindowsFormsApp1
         public void jugarCarta(Carta carta)
         {
             jugadores[turnoActual].removeCarta(carta);
+            juego.añadirCartas(carta);
             this.siguienteTurno();
         }
         public bool sePuedeJugar(Carta carta)
@@ -98,6 +99,12 @@ namespace WindowsFormsApp1
             if (carta.getValor() == cartaActual.getValor())
                 return true;
             return false;
+        }
+        public void iniciaDescarte()
+        {
+            Carta carta = mazo.getCarta(0);
+            juego.añadirCartas(carta);
+            mazo.removeCarta(0);
         }
     }
 }

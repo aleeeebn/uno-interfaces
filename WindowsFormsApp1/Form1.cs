@@ -18,6 +18,9 @@ namespace WindowsFormsApp1
             InitializeComponent();
             partida = new Partida();
             partida.repartir();
+            partida.iniciaDescarte();
+            actualizarCantidadCartas();
+            lblDescarte.Text = partida.getJuego().getUltimaCarta().ToString();
             mostrarJugadorActual();
         }
 
@@ -40,7 +43,7 @@ namespace WindowsFormsApp1
             {
                 partida.jugarCarta(carta);
                 lblDescarte.Text = carta.ToString();
-                partida.getJuego().añadirCartas(carta);
+                actualizarCantidadCartas();
                 mostrarJugadorActual();
             } else
             {
@@ -62,6 +65,13 @@ namespace WindowsFormsApp1
                 botonCarta.Click += jugarCarta;
                 pnlMano.Controls.Add(botonCarta);
             }
+        }
+        private void actualizarCantidadCartas()
+        {
+            List<Jugador> jugadores = partida.getJugadores();
+            lbljugador1.Text = jugadores[0].getNombre() + "\n" + jugadores[0].getCartas().Count + " cartas";
+            lbljugador2.Text = jugadores[1].getNombre() + "\n" + jugadores[1].getCartas().Count + " cartas";
+            lbljugador3.Text = jugadores[2].getNombre() + "\n" + jugadores[2].getCartas().Count + " cartas";
         }
     }
 }
