@@ -92,6 +92,7 @@
             this.btnmazo.TabIndex = 5;
             this.btnmazo.Text = "robar";
             this.btnmazo.UseVisualStyleBackColor = true;
+            this.btnmazo.Click += new System.EventHandler(this.btnmazo_Click);
             // 
             // btnpasar
             // 
@@ -101,6 +102,7 @@
             this.btnpasar.TabIndex = 6;
             this.btnpasar.Text = "pasar";
             this.btnpasar.UseVisualStyleBackColor = true;
+            this.btnpasar.Click += new System.EventHandler(this.btnpasar_Click);
             // 
             // lblDescarte
             // 

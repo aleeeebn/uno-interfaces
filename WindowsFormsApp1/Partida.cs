@@ -106,5 +106,15 @@ namespace WindowsFormsApp1
             juego.añadirCartas(carta);
             mazo.removeCarta(0);
         }
+        public void robarCarta()
+        {
+            siMazoEstaVacio();
+            if (!mazo.estaVacio())
+            {
+                Carta carta = mazo.getCarta(0);
+                jugadores[turnoActual].añadirCarta(carta);
+                mazo.removeCarta(0);
+            }
+        }
     }
 }

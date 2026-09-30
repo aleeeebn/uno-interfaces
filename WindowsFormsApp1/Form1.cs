@@ -13,9 +13,11 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         private Partida partida;
+        private bool roboEsteTurno;
         public Form1()
         {
             InitializeComponent();
+            roboEsteTurno = false;
             partida = new Partida();
             partida.repartir();
             partida.iniciaDescarte();
@@ -43,6 +45,7 @@ namespace WindowsFormsApp1
             {
                 partida.jugarCarta(carta);
                 lblDescarte.Text = carta.ToString();
+                roboEsteTurno = false;
                 actualizarCantidadCartas();
                 mostrarJugadorActual();
             } else
@@ -72,6 +75,27 @@ namespace WindowsFormsApp1
             lbljugador1.Text = jugadores[0].getNombre() + "\n" + jugadores[0].getCartas().Count + " cartas";
             lbljugador2.Text = jugadores[1].getNombre() + "\n" + jugadores[1].getCartas().Count + " cartas";
             lbljugador3.Text = jugadores[2].getNombre() + "\n" + jugadores[2].getCartas().Count + " cartas";
+        }
+
+        private void btnpasar_Click(object sender, EventArgs e)
+        {
+            if (!roboEsteTurno)
+            {
+                MessageBox.Show("Primero se debe de robar una carta");
+                return;
+            }
+            partida.siguienteTurno();
+            roboEsteTurno = false;
+            actualizarCantidadCartas();
+            mostrarJugadorActual();
+        }
+
+        private void btnmazo_Click(object sender, EventArgs e)
+        {
+            roboEsteTurno = true;
+            partida.robarCarta();
+            actualizarCantidadCartas();
+            mostrarJugadorActual();
         }
     }
 }
