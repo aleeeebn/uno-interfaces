@@ -12,7 +12,6 @@ namespace WindowsFormsApp1
     {
         private List<Carta> cartas;
         private int cant;
-        private static int CANTIDAD = 12; // cuantas cartas hay en cada color x2 y comodines (o sea hay dos cartas de uno, dos de 6 y asi)
         private static int CANTIDADCOMODINES = 4; // iterador para el número máximo de un comodin que puede haber de +4 y cambios de color(no representa la cantidad total de comodines)
         public Mazo()
         {

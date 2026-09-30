@@ -36,10 +36,8 @@ namespace WindowsFormsApp1
         {
             Button boton = (Button)sender;
             Carta carta = (Carta)boton.Tag;
-            Jugador jugador = partida.getJugadorActual();
-            jugador.removeCarta(carta);
-            MessageBox.Show(jugador.getNombre() + " jugó " + carta.ToString());
-            partida.siguienteTurno();
+            partida.jugarCarta(carta);
+            lblDescarte.Text = carta.ToString();
             mostrarJugadorActual();
         }
         private void mostrarJugadorActual()

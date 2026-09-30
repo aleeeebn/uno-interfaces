@@ -35,6 +35,7 @@
             this.pnlMano = new System.Windows.Forms.FlowLayoutPanel();
             this.btnmazo = new System.Windows.Forms.Button();
             this.btnpasar = new System.Windows.Forms.Button();
+            this.lblDescarte = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbljugador1
@@ -101,11 +102,21 @@
             this.btnpasar.Text = "pasar";
             this.btnpasar.UseVisualStyleBackColor = true;
             // 
+            // lblDescarte
+            // 
+            this.lblDescarte.AutoSize = true;
+            this.lblDescarte.Location = new System.Drawing.Point(360, 160);
+            this.lblDescarte.Name = "lblDescarte";
+            this.lblDescarte.Size = new System.Drawing.Size(61, 13);
+            this.lblDescarte.TabIndex = 7;
+            this.lblDescarte.Text = "última carta";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblDescarte);
             this.Controls.Add(this.btnpasar);
             this.Controls.Add(this.btnmazo);
             this.Controls.Add(this.pnlMano);
@@ -129,6 +140,7 @@
         private System.Windows.Forms.FlowLayoutPanel pnlMano;
         private System.Windows.Forms.Button btnmazo;
         private System.Windows.Forms.Button btnpasar;
+        private System.Windows.Forms.Label lblDescarte;
     }
 }
 

@@ -77,5 +77,10 @@ namespace WindowsFormsApp1
                 turnoActual = 0;
             }
         }
+        public void jugarCarta(Carta carta)
+        {
+            jugadores[turnoActual].removeCarta(carta);
+            this.siguienteTurno();
+        }
     }
 }
