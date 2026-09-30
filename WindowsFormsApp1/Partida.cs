@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace WindowsFormsApp1
         private int cantTotalCartas;
         private int turnoActual;
         private string colorActual;
+        private int direccion;
+        private int comodinPendiente;
         public Partida()
         {
             mazo = new Mazo();
@@ -23,6 +26,8 @@ namespace WindowsFormsApp1
             jugadores = new List<Jugador>();
             juego = new CartasJuego();
             turnoActual = 0;
+            direccion = 1;
+            comodinPendiente = 0;
             agregarJugadoresDefault();
         }
         public string getColorActual()
@@ -84,21 +89,27 @@ namespace WindowsFormsApp1
         }
         public void siguienteTurno()
         {
-            turnoActual++;
+            turnoActual += direccion;
             if(turnoActual >= jugadores.Count)
             {
                 turnoActual = 0;
+            }
+            if(turnoActual < 0)
+            {
+                turnoActual = jugadores.Count - 1;
             }
         }
         public void jugarCarta(Carta carta)
         {
             jugadores[turnoActual].removeCarta(carta);
             juego.añadirCartas(carta);
-            if (carta.getColor() != "Comodin")
+            if (carta.getValor() == 13 || carta.getValor() == 14)
             {
-                colorActual = carta.getColor();
+                comodinPendiente = carta.getValor();
+                return;
             }
-            this.siguienteTurno();
+            colorActual = carta.getColor();
+            aplicarEfecto(carta);
         }
         public bool sePuedeJugar(Carta carta)
         {
@@ -118,6 +129,10 @@ namespace WindowsFormsApp1
             Carta carta = mazo.getCarta(0);
             juego.añadirCartas(carta);
             mazo.removeCarta(0);
+            if(carta.getColor() != "Comodin")
+            {
+                colorActual = carta.getColor();
+            }
         }
         public void robarCarta()
         {
@@ -144,16 +159,44 @@ namespace WindowsFormsApp1
             switch (carta.getValor())
             {
                 case 10:
+                    siguienteTurno();
+                    robarCartas(jugadores[turnoActual], 2);
+                    siguienteTurno();
                     break;
                 case 11:
+                    direccion *= -1;
+                    siguienteTurno();
                     break;
                 case 12:
+                    siguienteTurno();
+                    siguienteTurno();
                     break;
                 case 13:
                     break;
                 case 14:
                     break;
+                default:
+                    siguienteTurno();
+                    break;
             }
+        }
+        public void elegirColor(string color)
+        {
+            colorActual = color;
+            if(comodinPendiente == 14)
+            {
+                siguienteTurno();
+                robarCartas(jugadores[turnoActual], 4);
+                siguienteTurno();
+            } else
+            {
+                siguienteTurno();
+            }
+            comodinPendiente = 0;
+        }
+        public bool necesitaElegirColor()
+        {
+            return comodinPendiente == 13 || comodinPendiente == 14;
         }
     }
 }

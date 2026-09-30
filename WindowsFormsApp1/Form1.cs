@@ -14,10 +14,10 @@ namespace WindowsFormsApp1
     {
         private Partida partida;
         private bool roboEsteTurno;
-        private string colorActual = null;
         public Form1()
         {
             InitializeComponent();
+            mostrarBotonesColor(false);
             roboEsteTurno = false;
             partida = new Partida();
             partida.repartir();
@@ -49,7 +49,13 @@ namespace WindowsFormsApp1
                 roboEsteTurno = false;
                 
                 actualizarCantidadCartas();
-                mostrarJugadorActual();
+                if (partida.necesitaElegirColor())
+                {
+                    mostrarBotonesColor(true);
+                } else
+                {
+                    mostrarJugadorActual();
+                }
             } else
             {
                 MessageBox.Show("No se puede jugar esa carta");
@@ -71,12 +77,20 @@ namespace WindowsFormsApp1
                 pnlMano.Controls.Add(botonCarta);
             }
         }
+        private void mostrarBotonesColor(bool mostrar)
+        {
+            btnRojo.Visible = mostrar;
+            btnAzul.Visible = mostrar;
+            btnVerde.Visible = mostrar;
+            btnAmarillo.Visible = mostrar;
+        }
         private void actualizarCantidadCartas()
         {
             List<Jugador> jugadores = partida.getJugadores();
             lbljugador1.Text = jugadores[0].getNombre() + "\n" + jugadores[0].getCartas().Count + " cartas";
             lbljugador2.Text = jugadores[1].getNombre() + "\n" + jugadores[1].getCartas().Count + " cartas";
             lbljugador3.Text = jugadores[2].getNombre() + "\n" + jugadores[2].getCartas().Count + " cartas";
+            lblMazo.Text = "Mazo: " + partida.getMazo().getMazoSize().ToString() + " cartas";
         }
 
         private void btnpasar_Click(object sender, EventArgs e)
@@ -102,30 +116,50 @@ namespace WindowsFormsApp1
 
         private void btnElegirColor_Click(object sender, EventArgs e)
         {
-            partida.setColorActual("Rojo");
+            partida.elegirColor("Rojo");
+            actualizarDescarteComodin();
+            mostrarBotonesColor(false);
             partida.siguienteTurno();
             mostrarJugadorActual();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            partida.setColorActual("Azul");
+            partida.elegirColor("Azul");
+            actualizarDescarteComodin();
+            mostrarBotonesColor(false);
             partida.siguienteTurno();
             mostrarJugadorActual();
         }
 
         private void btnVerde_Click(object sender, EventArgs e)
         {
-            partida.setColorActual("Verde");
+            partida.elegirColor("Verde");
+            actualizarDescarteComodin();
+            mostrarBotonesColor(false);
             partida.siguienteTurno();
             mostrarJugadorActual();
         }
 
         private void btnAmarillo_Click(object sender, EventArgs e)
         {
-            partida.setColorActual("Amarillo");
+            partida.elegirColor("Amarillo");
+            actualizarDescarteComodin();
+            mostrarBotonesColor(false);
             partida.siguienteTurno();
             mostrarJugadorActual();
+        }
+        private void actualizarDescarteComodin()
+        {
+            Carta carta = partida.getJuego().getUltimaCarta();
+            if(carta.getValor() == 13)
+            {
+                lblDescarte.Text = "Comodin\nColor: " + partida.getColorActual();
+            }
+            else if(carta.getValor() == 14)
+            {
+                lblDescarte.Text = "+4\nColor: " + partida.getColorActual();
+            }
         }
     }
 }

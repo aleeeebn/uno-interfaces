@@ -40,6 +40,7 @@
             this.btnAmarillo = new System.Windows.Forms.Button();
             this.btnAzul = new System.Windows.Forms.Button();
             this.btnVerde = new System.Windows.Forms.Button();
+            this.lblMazo = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbljugador1
@@ -157,11 +158,21 @@
             this.btnVerde.UseVisualStyleBackColor = true;
             this.btnVerde.Click += new System.EventHandler(this.btnVerde_Click);
             // 
+            // lblMazo
+            // 
+            this.lblMazo.AutoSize = true;
+            this.lblMazo.Location = new System.Drawing.Point(163, 279);
+            this.lblMazo.Name = "lblMazo";
+            this.lblMazo.Size = new System.Drawing.Size(86, 13);
+            this.lblMazo.TabIndex = 13;
+            this.lblMazo.Text = "Cartas en mazo: ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblMazo);
             this.Controls.Add(this.btnVerde);
             this.Controls.Add(this.btnAzul);
             this.Controls.Add(this.btnAmarillo);
@@ -195,6 +206,7 @@
         private System.Windows.Forms.Button btnAmarillo;
         private System.Windows.Forms.Button btnAzul;
         private System.Windows.Forms.Button btnVerde;
+        private System.Windows.Forms.Label lblMazo;
     }
 }
 
