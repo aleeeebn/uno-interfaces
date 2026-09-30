@@ -15,6 +15,10 @@ namespace WindowsFormsApp1
             this.nombre = nombre;
             cartas = new List<Carta>();
         }
+        public List<Carta> getCartas()
+        {
+            return cartas;
+        }
         public string getNombre()
         {
             return this.nombre;
@@ -22,6 +26,26 @@ namespace WindowsFormsApp1
         public void setNombre(string nombre)
         {
             this.nombre = nombre;
+        }
+        public bool uno()
+        {
+            if (cartas.Count() == 1)
+                return true;
+            return false;
+        }
+        public bool noTieneCartas()
+        {
+            if (cartas.Count == 0)
+                return true;
+            return false;
+        }
+        public void añadirCarta(Carta carta)
+        {
+            cartas.Add(carta);
+        }
+        public void removeCarta(Carta carta)
+        {
+            cartas.Remove(carta);
         }
     }
 }

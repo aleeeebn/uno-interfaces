@@ -43,7 +43,25 @@ namespace WindowsFormsApp1
         }
         public override string ToString()
         {
-            return color + " " + valor;
+            if(valor <= 9)
+                return color + " " + valor + "\n";
+            else
+                switch(valor)
+                {
+                    case 10:
+                        return color + " +2" + "\n";
+                    case 11:
+                        return color + "\nCambio direccion";
+                    case 12:
+                        return color + " Salto" + "\n";
+                    case 13:
+                        return "Cambio de color";
+                    case 14:
+                        return "+4";
+                    default:
+                        return null;
+                }
+                    
         }
     }
 }
