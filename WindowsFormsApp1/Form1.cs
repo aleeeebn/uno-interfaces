@@ -36,9 +36,16 @@ namespace WindowsFormsApp1
         {
             Button boton = (Button)sender;
             Carta carta = (Carta)boton.Tag;
-            partida.jugarCarta(carta);
-            lblDescarte.Text = carta.ToString();
-            mostrarJugadorActual();
+            if (partida.sePuedeJugar(carta))
+            {
+                partida.jugarCarta(carta);
+                lblDescarte.Text = carta.ToString();
+                partida.getJuego().añadirCartas(carta);
+                mostrarJugadorActual();
+            } else
+            {
+                MessageBox.Show("No se puede jugar esa carta");
+            }
         }
         private void mostrarJugadorActual()
         {

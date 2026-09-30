@@ -19,11 +19,17 @@ namespace WindowsFormsApp1
         }
         public int getCantidadCartas()
         {
-            return cartas.Count();
+            return cartas.Count;
         }
         public Carta getPrimerCarta()
         {
             return cartas[0];
+        }
+        public Carta getUltimaCarta()
+        {
+            if (cartas.Count == 0)
+                return null;
+            return cartas[cartas.Count - 1];
         }
         public void eliminaPrimerCarta()
         {

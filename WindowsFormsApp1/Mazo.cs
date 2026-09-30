@@ -30,7 +30,7 @@ namespace WindowsFormsApp1
         }
         public int getMazoSize()
         {
-            return cartas.Count();
+            return cartas.Count;
         }
         public void removeCarta(int i)
         {
@@ -38,7 +38,7 @@ namespace WindowsFormsApp1
         }
         public bool estaVacio()
         {
-            if (this.cartas.Count() == 0)
+            if (this.cartas.Count == 0)
                 return true;
             return false;
         }

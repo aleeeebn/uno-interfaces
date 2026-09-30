@@ -36,6 +36,10 @@ namespace WindowsFormsApp1
         {
             return this.mazo;
         }
+        public CartasJuego getJuego()
+        {
+            return juego;
+        }
         public void agregarJugadoresDefault()
         {
             for(int i = 1; i <= CANTIDADJUGADORESDEFAULT; i++)
@@ -81,6 +85,19 @@ namespace WindowsFormsApp1
         {
             jugadores[turnoActual].removeCarta(carta);
             this.siguienteTurno();
+        }
+        public bool sePuedeJugar(Carta carta)
+        {
+            Carta cartaActual = juego.getUltimaCarta();
+            if (cartaActual == null)
+                return true;
+            if (carta.getColor() == "Comodin")
+                return true;
+            if (carta.getColor() == cartaActual.getColor())
+                return true;
+            if (carta.getValor() == cartaActual.getValor())
+                return true;
+            return false;
         }
     }
 }
