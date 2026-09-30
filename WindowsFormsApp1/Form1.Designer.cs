@@ -28,34 +28,107 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            this.lbljugador1 = new System.Windows.Forms.Label();
+            this.lbljugador2 = new System.Windows.Forms.Label();
+            this.lbljugador3 = new System.Windows.Forms.Label();
+            this.lblturno = new System.Windows.Forms.Label();
+            this.pnlMano = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnmazo = new System.Windows.Forms.Button();
+            this.btnpasar = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button1
+            // lbljugador1
             // 
-            this.button1.Location = new System.Drawing.Point(302, 150);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.lbljugador1.AutoSize = true;
+            this.lbljugador1.Location = new System.Drawing.Point(63, 78);
+            this.lbljugador1.Name = "lbljugador1";
+            this.lbljugador1.Size = new System.Drawing.Size(54, 13);
+            this.lbljugador1.TabIndex = 0;
+            this.lbljugador1.Text = "Jugador 1";
+            this.lbljugador1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // lbljugador2
+            // 
+            this.lbljugador2.AutoSize = true;
+            this.lbljugador2.Location = new System.Drawing.Point(360, 38);
+            this.lbljugador2.Name = "lbljugador2";
+            this.lbljugador2.Size = new System.Drawing.Size(54, 13);
+            this.lbljugador2.TabIndex = 1;
+            this.lbljugador2.Text = "Jugador 2";
+            // 
+            // lbljugador3
+            // 
+            this.lbljugador3.AutoSize = true;
+            this.lbljugador3.Location = new System.Drawing.Point(665, 78);
+            this.lbljugador3.Name = "lbljugador3";
+            this.lbljugador3.Size = new System.Drawing.Size(54, 13);
+            this.lbljugador3.TabIndex = 2;
+            this.lbljugador3.Text = "Jugador 3";
+            // 
+            // lblturno
+            // 
+            this.lblturno.AutoSize = true;
+            this.lblturno.Location = new System.Drawing.Point(-2, 258);
+            this.lblturno.Name = "lblturno";
+            this.lblturno.Size = new System.Drawing.Size(41, 13);
+            this.lblturno.TabIndex = 3;
+            this.lblturno.Text = "Turno; ";
+            // 
+            // pnlMano
+            // 
+            this.pnlMano.AutoScroll = true;
+            this.pnlMano.Location = new System.Drawing.Point(1, 300);
+            this.pnlMano.Name = "pnlMano";
+            this.pnlMano.Size = new System.Drawing.Size(787, 100);
+            this.pnlMano.TabIndex = 4;
+            this.pnlMano.WrapContents = false;
+            // 
+            // btnmazo
+            // 
+            this.btnmazo.Location = new System.Drawing.Point(82, 274);
+            this.btnmazo.Name = "btnmazo";
+            this.btnmazo.Size = new System.Drawing.Size(75, 23);
+            this.btnmazo.TabIndex = 5;
+            this.btnmazo.Text = "robar";
+            this.btnmazo.UseVisualStyleBackColor = true;
+            // 
+            // btnpasar
+            // 
+            this.btnpasar.Location = new System.Drawing.Point(1, 274);
+            this.btnpasar.Name = "btnpasar";
+            this.btnpasar.Size = new System.Drawing.Size(75, 23);
+            this.btnpasar.TabIndex = 6;
+            this.btnpasar.Text = "pasar";
+            this.btnpasar.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnpasar);
+            this.Controls.Add(this.btnmazo);
+            this.Controls.Add(this.pnlMano);
+            this.Controls.Add(this.lblturno);
+            this.Controls.Add(this.lbljugador3);
+            this.Controls.Add(this.lbljugador2);
+            this.Controls.Add(this.lbljugador1);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lbljugador1;
+        private System.Windows.Forms.Label lbljugador2;
+        private System.Windows.Forms.Label lbljugador3;
+        private System.Windows.Forms.Label lblturno;
+        private System.Windows.Forms.FlowLayoutPanel pnlMano;
+        private System.Windows.Forms.Button btnmazo;
+        private System.Windows.Forms.Button btnpasar;
     }
 }
 

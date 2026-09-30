@@ -15,8 +15,10 @@ namespace WindowsFormsApp1
         private Partida partida;
         public Form1()
         {
-            partida = new Partida();
             InitializeComponent();
+            partida = new Partida();
+            partida.repartir();
+            mostrarJugadorActual();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -24,6 +26,37 @@ namespace WindowsFormsApp1
             MessageBox.Show(partida.getMazo().getMazoSize().ToString());
             //MessageBox.Show(partida.getMazo().getCarta(0).ToString());
             //partida.getMazo().barajear();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+        public void jugarCarta(object sender, EventArgs e)
+        {
+            Button boton = (Button)sender;
+            Carta carta = (Carta)boton.Tag;
+            Jugador jugador = partida.getJugadorActual();
+            jugador.removeCarta(carta);
+            MessageBox.Show(jugador.getNombre() + " jugó " + carta.ToString());
+            partida.siguienteTurno();
+            mostrarJugadorActual();
+        }
+        private void mostrarJugadorActual()
+        {
+            pnlMano.Controls.Clear();
+            Jugador jugador = partida.getJugadorActual();
+            lblturno.Text = "Turno de: " + jugador.getNombre();
+            foreach(Carta carta in jugador.getCartas())
+            {
+                Button botonCarta = new Button();
+                botonCarta.Width = 80;
+                botonCarta.Height = 120;
+                botonCarta.Text = carta.ToString();
+                botonCarta.Tag = carta;
+                botonCarta.Click += jugarCarta;
+                pnlMano.Controls.Add(botonCarta);
+            }
         }
     }
 }

@@ -14,13 +14,23 @@ namespace WindowsFormsApp1
         private static int CANTIDADJUGADORESDEFAULT = 3;
         private static int CANTIDADCARTASPORJUGADOR = 7;
         private int cantTotalCartas;
+        private int turnoActual;
         public Partida()
         {
             mazo = new Mazo();
             cantTotalCartas = mazo.getCantCartas();
             jugadores = new List<Jugador>();
             juego = new CartasJuego();
+            turnoActual = 0;
             agregarJugadoresDefault();
+        }
+        public Jugador getJugadorActual()
+        {
+            return jugadores[turnoActual];
+        }
+        public List<Jugador> getJugadores()
+        {
+            return jugadores;
         }
         public Mazo getMazo()
         {
@@ -28,7 +38,7 @@ namespace WindowsFormsApp1
         }
         public void agregarJugadoresDefault()
         {
-            for(int i = 0; i < CANTIDADJUGADORESDEFAULT; i++)
+            for(int i = 1; i <= CANTIDADJUGADORESDEFAULT; i++)
             {
                 Jugador nuevoJugador = new Jugador("Jugador " + i);
                 jugadores.Add(nuevoJugador);
@@ -40,11 +50,9 @@ namespace WindowsFormsApp1
             {
                 for(int i = 0; i < CANTIDADCARTASPORJUGADOR; i++)
                 {
-                    Random random = new Random();
-                    int cartaSeleccionada = random.Next(0, cantTotalCartas + 1);
-                    jugador.añadirCarta(mazo.getCarta(cartaSeleccionada));
-                    juego.añadirCartas(mazo.getCarta(cartaSeleccionada));
-                    mazo.removeCarta(cartaSeleccionada);
+                    Carta carta = mazo.getCarta(0);
+                    jugador.añadirCarta(carta);
+                    mazo.removeCarta(0);
                     cantTotalCartas--;
                 }
             }
@@ -59,6 +67,14 @@ namespace WindowsFormsApp1
                     juego.eliminaPrimerCarta();
                 }
                 mazo.barajear();
+            }
+        }
+        public void siguienteTurno()
+        {
+            turnoActual++;
+            if(turnoActual >= jugadores.Count)
+            {
+                turnoActual = 0;
             }
         }
     }

@@ -45,40 +45,42 @@ namespace WindowsFormsApp1
         }
         public void mazoDefault()
         {
-            for(int i = 0; i < CANTIDAD; i++)
-            {
-                Carta nuevaCartaRoja = new Carta("Rojo", i);
-                cartas.Add(nuevaCartaRoja);
-                cartas.Add(nuevaCartaRoja);
-                Carta nuevaCartaAzul = new Carta("Azul", i);
-                cartas.Add(nuevaCartaAzul);
-                cartas.Add(nuevaCartaAzul);
-                Carta nuevaCartaVerde = new Carta("Verde", i);
-                cartas.Add(nuevaCartaVerde);
-                cartas.Add(nuevaCartaVerde);
-                Carta nuevaCartaAmarilla = new Carta("Amarilla", i);
-                cartas.Add(nuevaCartaAmarilla);
-                cartas.Add(nuevaCartaAmarilla);
+            string[] colores = { "Rojo", "Azul", "Amarillo", "Verde" };
 
-                cant += 8;
+            foreach(string color in colores)
+            {
+                cartas.Add(new Carta(color, 0));
+                for(int numero = 1; numero <= 9; numero++)
+                {
+                    cartas.Add(new Carta(color, numero));
+                    cartas.Add(new Carta(color, numero));
+                }
+                cartas.Add(new Carta(color, 10));
+                cartas.Add(new Carta(color, 10));
+
+                cartas.Add(new Carta(color, 11));
+                cartas.Add(new Carta(color, 11));
+
+                cartas.Add(new Carta(color, 12));
+                cartas.Add(new Carta(color, 12));
             }
+
             for(int i = 0; i < CANTIDADCOMODINES; i++)
             {
                 Carta nuevaCartaCambiaColor = new Carta("Comodin", 13);
                 cartas.Add(nuevaCartaCambiaColor);
                 Carta nuevaCartaComeCuatro = new Carta("Comodin", 14);
                 cartas.Add(nuevaCartaComeCuatro);
-
-                cant += 2;
             }
+            cant = cartas.Count;
         }
         public void barajear()
         {
-            for(int i = 0; i < cant; i++)
+            Random random = new Random();
+            for (int i = 0; i < cant; i++)
             {
-                Random random = new Random();
-                int cartaAleatoria = random.Next(0, cant);
-                Carta temp = this.getCarta(i);
+                int cartaAleatoria = random.Next(i + 1);
+                Carta temp = cartas[i];
                 cartas[i] = cartas[cartaAleatoria];
                 cartas[cartaAleatoria] = temp;
             }
