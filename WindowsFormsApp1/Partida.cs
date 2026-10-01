@@ -50,6 +50,17 @@ namespace WindowsFormsApp1
         {
             return juego;
         }
+        public Jugador getGanador()
+        {
+            foreach(Jugador jugador in jugadores)
+            {
+                if (jugador.noTieneCartas())
+                {
+                    return jugador;
+                }
+            }
+            return null;
+        }
         public void setColorActual(string color)
         {
             colorActual = color;
@@ -180,6 +191,15 @@ namespace WindowsFormsApp1
                     siguienteTurno();
                     break;
             }
+        }
+        public bool hayGanador()
+        {
+            foreach(Jugador jugador in jugadores)
+            {
+                if (jugador.noTieneCartas())
+                    return true;
+            }
+            return false;
         }
         public void elegirColor(string color)
         {

@@ -26,14 +26,6 @@ namespace WindowsFormsApp1
             lblDescarte.Text = partida.getJuego().getUltimaCarta().ToString();
             mostrarJugadorActual();
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(partida.getMazo().getMazoSize().ToString());
-            //MessageBox.Show(partida.getMazo().getCarta(0).ToString());
-            //partida.getMazo().barajear();
-        }
-
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -49,6 +41,15 @@ namespace WindowsFormsApp1
                 roboEsteTurno = false;
                 
                 actualizarCantidadCartas();
+                if (partida.hayGanador())
+                {
+                    Jugador ganador = partida.getGanador();
+                    MessageBox.Show("¡" + ganador.getNombre() + " ganó la partida!");
+                    pnlMano.Controls.Clear();
+                    btnmazo.Enabled = false;
+                    btnpasar.Enabled = false;
+                    return;
+                }
                 if (partida.necesitaElegirColor())
                 {
                     mostrarBotonesColor(true);
@@ -119,7 +120,7 @@ namespace WindowsFormsApp1
             partida.elegirColor("Rojo");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
-            partida.siguienteTurno();
+            actualizarCantidadCartas();
             mostrarJugadorActual();
         }
 
@@ -128,7 +129,7 @@ namespace WindowsFormsApp1
             partida.elegirColor("Azul");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
-            partida.siguienteTurno();
+            actualizarCantidadCartas();
             mostrarJugadorActual();
         }
 
@@ -137,7 +138,7 @@ namespace WindowsFormsApp1
             partida.elegirColor("Verde");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
-            partida.siguienteTurno();
+            actualizarCantidadCartas();
             mostrarJugadorActual();
         }
 
@@ -146,7 +147,7 @@ namespace WindowsFormsApp1
             partida.elegirColor("Amarillo");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
-            partida.siguienteTurno();
+            actualizarCantidadCartas();
             mostrarJugadorActual();
         }
         private void actualizarDescarteComodin()
