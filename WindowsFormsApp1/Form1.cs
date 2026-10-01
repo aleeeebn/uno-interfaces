@@ -53,6 +53,9 @@ namespace WindowsFormsApp1
                 if (partida.necesitaElegirColor())
                 {
                     mostrarBotonesColor(true);
+                    pnlMano.Enabled = false;
+                    btnmazo.Enabled = false;
+                    btnpasar.Enabled = false;
                 } else
                 {
                     mostrarJugadorActual();
@@ -109,8 +112,13 @@ namespace WindowsFormsApp1
 
         private void btnmazo_Click(object sender, EventArgs e)
         {
-            roboEsteTurno = true;
+            if (roboEsteTurno)
+            {
+                MessageBox.Show("Ya robaste este turno");
+                return;
+            }
             partida.robarCarta();
+            roboEsteTurno = true;
             actualizarCantidadCartas();
             mostrarJugadorActual();
         }
@@ -120,6 +128,9 @@ namespace WindowsFormsApp1
             partida.elegirColor("Rojo");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
+            pnlMano.Enabled = true;
+            btnmazo.Enabled = true;
+            btnpasar.Enabled = true;
             actualizarCantidadCartas();
             mostrarJugadorActual();
         }
@@ -129,6 +140,9 @@ namespace WindowsFormsApp1
             partida.elegirColor("Azul");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
+            pnlMano.Enabled = true;
+            btnmazo.Enabled = true;
+            btnpasar.Enabled = true;
             actualizarCantidadCartas();
             mostrarJugadorActual();
         }
@@ -138,6 +152,9 @@ namespace WindowsFormsApp1
             partida.elegirColor("Verde");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
+            pnlMano.Enabled = true;
+            btnmazo.Enabled = true;
+            btnpasar.Enabled = true;
             actualizarCantidadCartas();
             mostrarJugadorActual();
         }
@@ -147,6 +164,9 @@ namespace WindowsFormsApp1
             partida.elegirColor("Amarillo");
             actualizarDescarteComodin();
             mostrarBotonesColor(false);
+            pnlMano.Enabled = true;
+            btnmazo.Enabled = true;
+            btnpasar.Enabled = true;
             actualizarCantidadCartas();
             mostrarJugadorActual();
         }

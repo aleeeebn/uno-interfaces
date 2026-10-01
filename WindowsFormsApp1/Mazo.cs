@@ -76,7 +76,7 @@ namespace WindowsFormsApp1
         public void barajear()
         {
             Random random = new Random();
-            for (int i = 0; i < cant; i++)
+            for (int i = 0; i < cartas.Count; i++)
             {
                 int cartaAleatoria = random.Next(i + 1);
                 Carta temp = cartas[i];

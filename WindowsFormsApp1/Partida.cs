@@ -90,7 +90,7 @@ namespace WindowsFormsApp1
         {
             if (mazo.estaVacio())
             {
-                for(int i = 0; i < juego.getCantidadCartas() - 1; i++)
+                while(juego.getCantidadCartas() > 1)
                 {
                     mazo.add(juego.getPrimerCarta());
                     juego.eliminaPrimerCarta();
