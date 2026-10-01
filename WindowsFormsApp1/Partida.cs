@@ -50,6 +50,17 @@ namespace WindowsFormsApp1
         {
             return juego;
         }
+        public Jugador getGanador()
+        {
+            foreach(Jugador jugador in jugadores)
+            {
+                if (jugador.noTieneCartas())
+                {
+                    return jugador;
+                }
+            }
+            return null;
+        }
         public void setColorActual(string color)
         {
             colorActual = color;
@@ -79,7 +90,7 @@ namespace WindowsFormsApp1
         {
             if (mazo.estaVacio())
             {
-                for(int i = 0; i < juego.getCantidadCartas() - 1; i++)
+                while(juego.getCantidadCartas() > 1)
                 {
                     mazo.add(juego.getPrimerCarta());
                     juego.eliminaPrimerCarta();
@@ -126,13 +137,16 @@ namespace WindowsFormsApp1
         }
         public void iniciaDescarte()
         {
-            Carta carta = mazo.getCarta(0);
-            juego.añadirCartas(carta);
-            mazo.removeCarta(0);
-            if(carta.getColor() != "Comodin")
+            int i = 0;
+            while(i < mazo.getMazoSize() && mazo.getCarta(i).getValor() > 9)
             {
-                colorActual = carta.getColor();
+                i++;
             }
+            if (i >= mazo.getMazoSize()) return;
+            Carta carta = mazo.getCarta(i);
+            juego.añadirCartas(carta);
+            mazo.removeCarta(i);
+            colorActual = carta.getColor();
         }
         public void robarCarta()
         {
@@ -149,6 +163,7 @@ namespace WindowsFormsApp1
             for(int i = 0; i < cantidad; i++)
             {
                 siMazoEstaVacio();
+                if (mazo.estaVacio()) return;
                 Carta carta = mazo.getCarta(0);
                 jugador.añadirCarta(carta);
                 mazo.removeCarta(0);
@@ -171,14 +186,19 @@ namespace WindowsFormsApp1
                     siguienteTurno();
                     siguienteTurno();
                     break;
-                case 13:
-                    break;
-                case 14:
-                    break;
                 default:
                     siguienteTurno();
                     break;
             }
+        }
+        public bool hayGanador()
+        {
+            foreach(Jugador jugador in jugadores)
+            {
+                if (jugador.noTieneCartas())
+                    return true;
+            }
+            return false;
         }
         public void elegirColor(string color)
         {
