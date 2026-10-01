@@ -138,17 +138,15 @@ namespace WindowsFormsApp1
         public void iniciaDescarte()
         {
             int i = 0;
-            while(mazo.getCarta(i).getValor() > 9)
+            while(i < mazo.getMazoSize() && mazo.getCarta(i).getValor() > 9)
             {
                 i++;
             }
+            if (i >= mazo.getMazoSize()) return;
             Carta carta = mazo.getCarta(i);
             juego.añadirCartas(carta);
             mazo.removeCarta(i);
-            if(carta.getColor() != "Comodin")
-            {
-                colorActual = carta.getColor();
-            }
+            colorActual = carta.getColor();
         }
         public void robarCarta()
         {
@@ -165,6 +163,7 @@ namespace WindowsFormsApp1
             for(int i = 0; i < cantidad; i++)
             {
                 siMazoEstaVacio();
+                if (mazo.estaVacio()) return;
                 Carta carta = mazo.getCarta(0);
                 jugador.añadirCarta(carta);
                 mazo.removeCarta(0);
