@@ -47,5 +47,9 @@ namespace WindowsFormsApp1
         {
             cartas.Remove(carta);
         }
+        public override string ToString()
+        {
+            return nombre;
+        }
     }
 }
