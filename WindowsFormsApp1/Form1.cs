@@ -77,6 +77,35 @@ namespace WindowsFormsApp1
             }
             actualizarDescarte();
         }
+        private void llenarMano(FlowLayoutPanel panel, Jugador jugador, bool esSuTurno)
+        {
+            panel.Controls.Clear();
+            panel.Enabled = esSuTurno;
+            foreach (Carta carta in jugador.getCartas())
+            {
+                Button b = new Button();
+                b.Width = ImagenesCartas.Ancho;
+                b.Height = ImagenesCartas.Alto;
+                b.FlatStyle = FlatStyle.Flat;
+                b.BackgroundImageLayout = ImageLayout.Stretch;
+                b.Tag = carta;
+                if (esSuTurno)
+                {
+                    b.BackgroundImage = ImagenesCartas.Obtener(carta);
+                    b.Click += jugarCarta;
+                    if (!partida.sePuedeJugar(carta))
+                        b.FlatAppearance.BorderColor = Color.Gray;
+                    else
+                        b.FlatAppearance.BorderColor = Color.LimeGreen;
+                    b.FlatAppearance.BorderSize = 3;
+                }
+                else
+                {
+                    b.BackgroundImage = ImagenesCartas.Dorso();
+                }
+                panel.Controls.Add(b);
+            }
+        }
         private void mostrarBotonesColor(bool mostrar)
         {
             btnRojo.Visible = mostrar;
