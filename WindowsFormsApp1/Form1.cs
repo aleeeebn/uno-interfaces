@@ -166,5 +166,15 @@ namespace WindowsFormsApp1
                 case "Amarillo": picColor.BackColor = Color.Gold; break;
             }
         }
+
+        private void elegirColor(string color)
+        {
+            partida.elegirColor(color);
+            mostrarBotonesColor(false);
+            btnmazo.Enabled = true;
+            btnpasar.Enabled = true;
+            actualizarCantidadCartas();
+            mostrarJugadorActual();
+        }
     }
 }
