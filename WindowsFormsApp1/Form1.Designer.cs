@@ -76,7 +76,7 @@
             // lblturno
             // 
             this.lblturno.AutoSize = true;
-            this.lblturno.Location = new System.Drawing.Point(732, 437);
+            this.lblturno.Location = new System.Drawing.Point(728, 469);
             this.lblturno.Name = "lblturno";
             this.lblturno.Size = new System.Drawing.Size(41, 13);
             this.lblturno.TabIndex = 3;
