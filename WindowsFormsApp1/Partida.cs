@@ -30,6 +30,10 @@ namespace WindowsFormsApp1
             comodinPendiente = 0;
             agregarJugadoresDefault();
         }
+        public int getTurnoActual()
+        {
+            return turnoActual;
+        }
         public string getColorActual()
         {
             return colorActual;
@@ -37,6 +41,10 @@ namespace WindowsFormsApp1
         public Jugador getJugadorActual()
         {
             return jugadores[turnoActual];
+        }
+        public Jugador getJugador(int index)
+        {
+            return jugadores[index];
         }
         public List<Jugador> getJugadores()
         {
