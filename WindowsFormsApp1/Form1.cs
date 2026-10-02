@@ -23,7 +23,6 @@ namespace WindowsFormsApp1
             partida.repartir();
             partida.iniciaDescarte();
             actualizarCantidadCartas();
-            lblDescarte.Text = partida.getJuego().getUltimaCarta().ToString();
             mostrarJugadorActual();
         }
         private void label1_Click(object sender, EventArgs e)
@@ -37,7 +36,6 @@ namespace WindowsFormsApp1
             if (partida.sePuedeJugar(carta))
             {
                 partida.jugarCarta(carta);
-                lblDescarte.Text = carta.ToString();
                 roboEsteTurno = false;
                 
                 actualizarCantidadCartas();
@@ -148,63 +146,24 @@ namespace WindowsFormsApp1
             mostrarJugadorActual();
         }
 
-        private void btnElegirColor_Click(object sender, EventArgs e)
-        {
-            partida.elegirColor("Rojo");
-            actualizarDescarteComodin();
-            mostrarBotonesColor(false);
-            pnlMano.Enabled = true;
-            btnmazo.Enabled = true;
-            btnpasar.Enabled = true;
-            actualizarCantidadCartas();
-            mostrarJugadorActual();
-        }
+    
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            partida.elegirColor("Azul");
-            actualizarDescarteComodin();
-            mostrarBotonesColor(false);
-            pnlMano.Enabled = true;
-            btnmazo.Enabled = true;
-            btnpasar.Enabled = true;
-            actualizarCantidadCartas();
-            mostrarJugadorActual();
-        }
+        
 
-        private void btnVerde_Click(object sender, EventArgs e)
+        private void actualizarDescarte()
         {
-            partida.elegirColor("Verde");
-            actualizarDescarteComodin();
-            mostrarBotonesColor(false);
-            pnlMano.Enabled = true;
-            btnmazo.Enabled = true;
-            btnpasar.Enabled = true;
-            actualizarCantidadCartas();
-            mostrarJugadorActual();
-        }
+            Carta ultima = partida.getJuego().getUltimaCarta();
+            if (ultima == null) return;
 
-        private void btnAmarillo_Click(object sender, EventArgs e)
-        {
-            partida.elegirColor("Amarillo");
-            actualizarDescarteComodin();
-            mostrarBotonesColor(false);
-            pnlMano.Enabled = true;
-            btnmazo.Enabled = true;
-            btnpasar.Enabled = true;
-            actualizarCantidadCartas();
-            mostrarJugadorActual();
-        }
-        private void actualizarDescarteComodin()
-        {
-            Carta carta = partida.getJuego().getUltimaCarta();
-            if(carta.getValor() == 13)
+            picDescarte.Image = ImagenesCartas.Obtener(ultima);
+            picDescarte.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            switch (partida.getColorActual())
             {
-                lblDescarte.Text = "Comodin\nColor: " + partida.getColorActual();
-            }
-            else if(carta.getValor() == 14)
-            {
-                lblDescarte.Text = "+4\nColor: " + partida.getColorActual();
+                case "Rojo": picColor.BackColor = Color.Red; break;
+                case "Azul": picColor.BackColor = Color.Blue; break;
+                case "Verde": picColor.BackColor = Color.Green; break;
+                case "Amarillo": picColor.BackColor = Color.Gold; break;
             }
         }
     }
