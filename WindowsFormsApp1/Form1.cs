@@ -67,19 +67,15 @@ namespace WindowsFormsApp1
         }
         private void mostrarJugadorActual()
         {
-            pnlMano.Controls.Clear();
-            Jugador jugador = partida.getJugadorActual();
-            lblturno.Text = "Turno de: " + jugador.getNombre();
-            foreach(Carta carta in jugador.getCartas())
+            int turnoActual = partida.getTurnoActual();
+            lblturno.Text = "Turno de: " + partida.getJugador(turnoActual).ToString();
+
+            FlowLayoutPanel[] paneles = { pnlMano, pnlMano2, pnlMano3 };
+            for (int i = 0; i < paneles.Length; i++)
             {
-                Button botonCarta = new Button();
-                botonCarta.Width = 80;
-                botonCarta.Height = 120;
-                botonCarta.Text = carta.ToString();
-                botonCarta.Tag = carta;
-                botonCarta.Click += jugarCarta;
-                pnlMano.Controls.Add(botonCarta);
+                llenarMano(paneles[i], partida.getJugador(i), i == turnoActual);
             }
+            actualizarDescarte();
         }
         private void mostrarBotonesColor(bool mostrar)
         {
