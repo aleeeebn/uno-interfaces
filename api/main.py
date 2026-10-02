@@ -52,3 +52,17 @@ def terminar_partida(id_partida: int, id_ganador: int):
     conexion.close()
     return {"id_partida": id_partida, "id_ganador" : id_ganador}
 
+@app.post("/movimientos")
+def registrar_movimiento(id_partida: int, id_jugador: int, accion: str, color_carta: str = None, valor_carta: int = None):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute(
+        "INSERT INTO log_movimientos "
+        "(id_partida, id_jugador, accion, color_carta, valor_carta) "
+        "VALUES (%s, %s, %s, %s, %s)",
+        (id_partida, id_jugador, accion, color_carta, valor_carta)
+    )
+    conexion.commit()
+    id_movimiento = cursor.lastrowid
+    conexion.close()
+    return {"id_movimiento": id_movimiento}
