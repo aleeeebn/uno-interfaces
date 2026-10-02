@@ -55,7 +55,6 @@
             this.lbljugador1.Size = new System.Drawing.Size(108, 25);
             this.lbljugador1.TabIndex = 0;
             this.lbljugador1.Text = "Jugador 1";
-            this.lbljugador1.Click += new System.EventHandler(this.label1_Click);
             // 
             // lbljugador2
             // 
@@ -91,7 +90,7 @@
             // 
             this.pnlMano.AutoScroll = true;
             this.pnlMano.Location = new System.Drawing.Point(2, 577);
-            this.pnlMano.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.pnlMano.Margin = new System.Windows.Forms.Padding(6);
             this.pnlMano.Name = "pnlMano";
             this.pnlMano.Size = new System.Drawing.Size(1574, 192);
             this.pnlMano.TabIndex = 4;
@@ -100,7 +99,7 @@
             // btnmazo
             // 
             this.btnmazo.Location = new System.Drawing.Point(164, 527);
-            this.btnmazo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnmazo.Margin = new System.Windows.Forms.Padding(6);
             this.btnmazo.Name = "btnmazo";
             this.btnmazo.Size = new System.Drawing.Size(150, 44);
             this.btnmazo.TabIndex = 5;
@@ -111,7 +110,7 @@
             // btnpasar
             // 
             this.btnpasar.Location = new System.Drawing.Point(2, 527);
-            this.btnpasar.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnpasar.Margin = new System.Windows.Forms.Padding(6);
             this.btnpasar.Name = "btnpasar";
             this.btnpasar.Size = new System.Drawing.Size(150, 44);
             this.btnpasar.TabIndex = 6;
@@ -122,7 +121,7 @@
             // btnRojo
             // 
             this.btnRojo.Location = new System.Drawing.Point(1172, 521);
-            this.btnRojo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnRojo.Margin = new System.Windows.Forms.Padding(6);
             this.btnRojo.Name = "btnRojo";
             this.btnRojo.Size = new System.Drawing.Size(150, 44);
             this.btnRojo.TabIndex = 9;
@@ -132,7 +131,7 @@
             // btnAmarillo
             // 
             this.btnAmarillo.Location = new System.Drawing.Point(1334, 521);
-            this.btnAmarillo.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnAmarillo.Margin = new System.Windows.Forms.Padding(6);
             this.btnAmarillo.Name = "btnAmarillo";
             this.btnAmarillo.Size = new System.Drawing.Size(150, 44);
             this.btnAmarillo.TabIndex = 10;
@@ -142,7 +141,7 @@
             // btnAzul
             // 
             this.btnAzul.Location = new System.Drawing.Point(1010, 521);
-            this.btnAzul.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnAzul.Margin = new System.Windows.Forms.Padding(6);
             this.btnAzul.Name = "btnAzul";
             this.btnAzul.Size = new System.Drawing.Size(150, 44);
             this.btnAzul.TabIndex = 11;
@@ -152,7 +151,7 @@
             // btnVerde
             // 
             this.btnVerde.Location = new System.Drawing.Point(848, 521);
-            this.btnVerde.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnVerde.Margin = new System.Windows.Forms.Padding(6);
             this.btnVerde.Name = "btnVerde";
             this.btnVerde.Size = new System.Drawing.Size(150, 44);
             this.btnVerde.TabIndex = 12;
@@ -184,6 +183,7 @@
             this.picColor.Size = new System.Drawing.Size(40, 40);
             this.picColor.TabIndex = 15;
             this.picColor.TabStop = false;
+            this.picColor.Click += new System.EventHandler(this.picColor_Click);
             // 
             // Form1
             // 
@@ -204,7 +204,7 @@
             this.Controls.Add(this.lbljugador3);
             this.Controls.Add(this.lbljugador2);
             this.Controls.Add(this.lbljugador1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.picDescarte)).EndInit();

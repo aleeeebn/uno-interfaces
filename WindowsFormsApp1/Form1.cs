@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsApp1
@@ -14,58 +9,106 @@ namespace WindowsFormsApp1
     {
         private Partida partida;
         private bool roboEsteTurno;
+        private bool dijoUno;
+        private int idPartidaBD; 
+
         public Form1()
         {
             InitializeComponent();
+
+            btnRojo.Click += (s, e) => elegirColor("Rojo");
+            btnAzul.Click += (s, e) => elegirColor("Azul");
+            btnVerde.Click += (s, e) => elegirColor("Verde");
+            btnAmarillo.Click += (s, e) => elegirColor("Amarillo");
+
+            btnRojo.BackColor = Color.Red; btnRojo.ForeColor = Color.White;
+            btnAzul.BackColor = Color.Blue; btnAzul.ForeColor = Color.White;
+            btnVerde.BackColor = Color.Green; btnVerde.ForeColor = Color.White;
+            btnAmarillo.BackColor = Color.Gold; btnAmarillo.ForeColor = Color.Black;
+
             mostrarBotonesColor(false);
             roboEsteTurno = false;
+            dijoUno = false;
+
             partida = new Partida();
             partida.repartir();
             partida.iniciaDescarte();
             actualizarCantidadCartas();
             mostrarJugadorActual();
         }
-        private void label1_Click(object sender, EventArgs e)
-        {
 
-        }
         public void jugarCarta(object sender, EventArgs e)
         {
             Button boton = (Button)sender;
             Carta carta = (Carta)boton.Tag;
+
             if (partida.sePuedeJugar(carta))
             {
+                Jugador quienJugo = partida.getJugadorActual();
+
                 partida.jugarCarta(carta);
                 roboEsteTurno = false;
-                
+                if (quienJugo.uno() && !dijoUno)
+                {
+                    MessageBox.Show(quienJugo.getNombre() + " olvidó decir UNO. Roba 2 cartas.");
+                    partida.robarCartas(quienJugo, 2);
+                }
+                dijoUno = false;
+
                 actualizarCantidadCartas();
+
                 if (partida.hayGanador())
                 {
                     Jugador ganador = partida.getGanador();
+
                     MessageBox.Show("¡" + ganador.getNombre() + " ganó la partida!");
-                    pnlMano.Controls.Clear();
-                    btnmazo.Enabled = false;
-                    btnpasar.Enabled = false;
+
+                    DialogResult r = MessageBox.Show("¿Jugar otra partida?", "UNO", MessageBoxButtons.YesNo);
+                    if (r == DialogResult.Yes)
+                    {
+                        Application.Restart();
+                    }
+                    else
+                    {
+                        pnlMano.Controls.Clear();
+                        pnlMano2.Controls.Clear();
+                        pnlMano3.Controls.Clear();
+                        btnmazo.Enabled = false;
+                        btnpasar.Enabled = false;
+                    }
                     return;
                 }
+
                 if (partida.necesitaElegirColor())
                 {
                     mostrarBotonesColor(true);
                     pnlMano.Enabled = false;
+                    pnlMano2.Enabled = false;
+                    pnlMano3.Enabled = false;
                     btnmazo.Enabled = false;
                     btnpasar.Enabled = false;
-                } else
+                }
+                else
                 {
                     mostrarJugadorActual();
                 }
-            } else
+            }
+            else
             {
                 MessageBox.Show("No se puede jugar esa carta");
             }
         }
+
+        private FlowLayoutPanel obtenerPanel(int i)
+        {
+            return i == 0 ? pnlMano : i == 1 ? pnlMano2 : pnlMano3;
+        }
+
         private void mostrarJugadorActual()
         {
             int turnoActual = partida.getTurnoActual();
+
+            MessageBox.Show("Pasa la computadora a " + partida.getJugador(turnoActual).getNombre(), "Cambio de turno");
             lblturno.Text = "Turno de: " + partida.getJugador(turnoActual).ToString();
 
             FlowLayoutPanel[] paneles = { pnlMano, pnlMano2, pnlMano3 };
@@ -75,10 +118,12 @@ namespace WindowsFormsApp1
             }
             actualizarDescarte();
         }
+
         private void llenarMano(FlowLayoutPanel panel, Jugador jugador, bool esSuTurno)
         {
             panel.Controls.Clear();
             panel.Enabled = esSuTurno;
+
             foreach (Carta carta in jugador.getCartas())
             {
                 Button b = new Button();
@@ -87,14 +132,17 @@ namespace WindowsFormsApp1
                 b.FlatStyle = FlatStyle.Flat;
                 b.BackgroundImageLayout = ImageLayout.Stretch;
                 b.Tag = carta;
+
                 if (esSuTurno)
                 {
                     b.BackgroundImage = ImagenesCartas.Obtener(carta);
                     b.Click += jugarCarta;
+
                     if (!partida.sePuedeJugar(carta))
                         b.FlatAppearance.BorderColor = Color.Gray;
                     else
                         b.FlatAppearance.BorderColor = Color.LimeGreen;
+
                     b.FlatAppearance.BorderSize = 3;
                 }
                 else
@@ -104,6 +152,7 @@ namespace WindowsFormsApp1
                 panel.Controls.Add(b);
             }
         }
+
         private void mostrarBotonesColor(bool mostrar)
         {
             btnRojo.Visible = mostrar;
@@ -111,6 +160,7 @@ namespace WindowsFormsApp1
             btnVerde.Visible = mostrar;
             btnAmarillo.Visible = mostrar;
         }
+
         private void actualizarCantidadCartas()
         {
             List<Jugador> jugadores = partida.getJugadores();
@@ -127,6 +177,7 @@ namespace WindowsFormsApp1
                 MessageBox.Show("Primero se debe de robar una carta");
                 return;
             }
+
             partida.siguienteTurno();
             roboEsteTurno = false;
             actualizarCantidadCartas();
@@ -135,20 +186,20 @@ namespace WindowsFormsApp1
 
         private void btnmazo_Click(object sender, EventArgs e)
         {
-            if (roboEsteTurno)
-            {
-                MessageBox.Show("Ya robaste este turno");
-                return;
-            }
             partida.robarCarta();
             roboEsteTurno = true;
+
+
+
             actualizarCantidadCartas();
-            mostrarJugadorActual();
+            llenarMano(obtenerPanel(partida.getTurnoActual()), partida.getJugadorActual(), true);
         }
 
-    
-
-        
+        private void btnUno_Click(object sender, EventArgs e)
+        {
+            dijoUno = true;
+            MessageBox.Show(partida.getJugadorActual().getNombre() + " dijo ¡UNO!");
+        }
 
         private void actualizarDescarte()
         {
@@ -175,6 +226,11 @@ namespace WindowsFormsApp1
             btnpasar.Enabled = true;
             actualizarCantidadCartas();
             mostrarJugadorActual();
+        }
+
+        private void picColor_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
