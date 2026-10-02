@@ -26,3 +26,25 @@ def jugadores():
        return {"jugadores":filas}
     finally:
         conexion.close()
+
+@app.post("/partidas")
+def crear_partida():
+    conexion = obtener_conexion()
+    try:
+        cursor = conexion.cursor()
+        cursor.execute("INSERT INTO partidas () VALUES ()")
+        id_partida = cursor.lastrowid
+        cursor.execute("SELECT id_jugador FROM jugadores")
+        filas = cursor.fetchall()
+        for fila in filas:
+            cursor.execute(
+                "INSERT INTO partida_jugadores (id_partida, id_jugador) VALUES (%s, %s)",
+                (id_partida, fila["id_jugador"])
+            )
+        conexion.commit()
+        return {"id_partida": id_partida}
+    except Exception:
+        conexion.rollback()
+        raise
+    finally:
+        conexion.close()
