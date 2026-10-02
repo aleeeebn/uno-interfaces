@@ -7,34 +7,23 @@ namespace WindowsFormsApp1
 {
     internal static partial class ImagenesCartas
     {
-        public static string NombreArchivo(Carta c)
+        public static Image Dorso()
         {
-            int v = c.getValor();
-            if (v == 13) return "cambio_color";
-            if (v == 14) return "+4";
-
-            string color = c.getColor();
-            string pref = color == "Rojo" ? "rojo" : color == "Azul" ? "azul"
-                        : color == "Verde" ? "verde" : "amarilla";
-
-            switch (v)
+            if (!cache.ContainsKey("dorso"))
             {
-                case 10: return (color == "Rojo" ? "roja" : pref) + "+2";
-                case 11: return pref + "_reversa";
-                case 12: return (color == "Amarillo" ? "amarillo" : pref) + "_stop";
-                default: return pref + v;
+                Bitmap bmp = new Bitmap(Ancho, Alto);
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.Clear(Color.Black);
+                    g.FillEllipse(Brushes.Red, 8, 30, Ancho - 16, Alto - 60);
+                    using (Font f = new Font("Arial", 16, FontStyle.Bold | FontStyle.Italic))
+                    {
+                        g.DrawString("UNO", f, Brushes.Yellow, 10, 48);
+                    }
+                }
+                cache["dorso"] = bmp;
             }
-        }
-
-        public static Image Obtener(Carta c)
-        {
-            string nombre = NombreArchivo(c);
-            if (!cache.ContainsKey(nombre))
-            {
-                string ruta = Path.Combine(Application.StartupPath, "assets", nombre + ".png");
-                cache[nombre] = CargarYEscalarImagen(ruta);
-            }
-            return cache[nombre];
+            return cache["dorso"];
         }
     }
 }
