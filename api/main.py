@@ -39,3 +39,16 @@ def crear_partida():
     conexion.commit()
     conexion.close()
     return {"id_partida": id_partida}
+
+@app.post("/partidas/{id_partida}/terminar")
+def terminar_partida(id_partida: int, id_ganador: int):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute(
+        "UPDATE partidas SET fecha_fin = NOW(), id_ganador = %s, estado = 'terminada' "
+        "WHERE id_partida = %s",(id_ganador, id_partida)
+    )
+    conexion.commit()
+    conexion.close()
+    return {"id_partida": id_partida, "id_ganador" : id_ganador}
+
