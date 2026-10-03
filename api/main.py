@@ -66,3 +66,22 @@ def registrar_movimiento(id_partida: int, id_jugador: int, accion: str, color_ca
     id_movimiento = cursor.lastrowid
     conexion.close()
     return {"id_movimiento": id_movimiento}
+
+@app.get("/historial")
+def historial():
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute(
+        "SELECT j.id_jugador, j.nombre, "
+        "COUNT(p.id_partida) AS jugadas, "
+        "COUNT(CASE WHEN p.id_ganador = j.id_jugador THEN p.id_partida END) AS ganadas "
+        "FROM jugadores j "
+        "LEFT JOIN partida_jugadores pj ON pj.id_jugador = j.id_jugador "
+        "LEFT JOIN partidas p ON p.id_partida = pj.id_partida AND p.estado = 'terminada' "
+        "GROUP BY j.id_jugador, j.nombre"
+    )
+    datos = cursor.fetchall()
+    conexion.close()
+    for fila in datos:
+        fila["perdidas"] = fila["jugadas"] - fila["ganadas"]
+    return datos
