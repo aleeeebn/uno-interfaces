@@ -29,21 +29,43 @@ namespace WindowsFormsApp1
 
         public static Image Obtener(Carta c)
         {
+            if (c == null) return null;
+
             string nombre = NombreArchivo(c);
+
             if (!cache.ContainsKey(nombre))
             {
                 string ruta = Path.Combine(Application.StartupPath, "assets", nombre + ".png");
-                using (Image original = Image.FromFile(ruta))
+
+                if (File.Exists(ruta))
+                {
+                    using (Image original = Image.FromFile(ruta))
+                    {
+                        Bitmap bmp = new Bitmap(Ancho, Alto);
+                        using (Graphics g = Graphics.FromImage(bmp))
+                        {
+                            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                            g.DrawImage(original, 0, 0, Ancho, Alto);
+                        }
+                        cache[nombre] = bmp;
+                    }
+                }
+                else
                 {
                     Bitmap bmp = new Bitmap(Ancho, Alto);
                     using (Graphics g = Graphics.FromImage(bmp))
                     {
-                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                        g.DrawImage(original, 0, 0, Ancho, Alto);
+                        g.Clear(Color.DarkSlateGray);
+                        using (Font font = new Font("Arial", 9, FontStyle.Bold))
+                        using (Brush brush = new SolidBrush(Color.White))
+                        {
+                            g.DrawString(nombre, font, brush, 5, 20);
+                        }
                     }
                     cache[nombre] = bmp;
                 }
             }
+
             return cache[nombre];
         }
 
