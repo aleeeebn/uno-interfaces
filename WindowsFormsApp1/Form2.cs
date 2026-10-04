@@ -817,7 +817,7 @@ namespace WindowsFormsApp1
                 }
             }
 
-            // ---- Fin de partida ----
+            
             void TerminarPartida()
             {
                 Jugador ganador = partida.getGanador();
