@@ -32,5 +32,16 @@ namespace WindowsFormsApp1
             }
             return carpeta;
         }
+
+        static string Prefijo(string color, bool conjuntoAmarilloOtro)
+        {
+            switch (color)
+            {
+                case "Rojo": return "rojo";
+                case "Azul": return "azul";
+                case "Amarillo": return "amarilla";
+                default: return "verde";
+            }
+        }
     }
 }
