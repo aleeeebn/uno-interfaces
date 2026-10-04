@@ -43,5 +43,25 @@ namespace WindowsFormsApp1
                 default: return "verde";
             }
         }
+
+        // Nombres tal cual están en tu carpeta assets
+        public static string NombreArchivo(Carta c)
+        {
+            int v = c.getValor();
+            string col = c.getColor();
+            if (v == 13) return "cambio_color.png";
+            if (v == 14) return "+4.png";
+            switch (v)
+            {
+                case 10:
+                    return (col == "Rojo" ? "roja" : Prefijo(col, false)) + "+2.png";
+                case 11:
+                    return Prefijo(col, false) + "_reversa.png";
+                case 12:
+                    return (col == "Amarillo" ? "amarillo" : Prefijo(col, false)) + "_stop.png";
+                default:
+                    return Prefijo(col, false) + v + ".png";
+            }
+        }
     }
 }
