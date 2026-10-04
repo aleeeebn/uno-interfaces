@@ -802,7 +802,7 @@ namespace WindowsFormsApp1
                 mesa.Invalidate();
             }
 
-            // ---- Botón UNO ----
+            
             void AlPresionarUno()
             {
                 int cartas = partida.getJugadorActual().getCartas().Count;
