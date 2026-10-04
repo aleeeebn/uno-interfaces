@@ -39,7 +39,7 @@ namespace WindowsFormsApp1
                 partida.jugarCarta(carta);
                 lblDescarte.Text = carta.ToString();
                 roboEsteTurno = false;
-                
+
                 actualizarCantidadCartas();
                 if (partida.hayGanador())
                 {
@@ -58,11 +58,13 @@ namespace WindowsFormsApp1
                     pnlMano.Enabled = false;
                     btnmazo.Enabled = false;
                     btnpasar.Enabled = false;
-                } else
+                }
+                else
                 {
                     mostrarJugadorActual();
                 }
-            } else
+            }
+            else
             {
                 MessageBox.Show("No se puede jugar esa carta");
             }
@@ -218,11 +220,11 @@ namespace WindowsFormsApp1
         private void actualizarDescarteComodin()
         {
             Carta carta = partida.getJuego().getUltimaCarta();
-            if(carta.getValor() == 13)
+            if (carta.getValor() == 13)
             {
                 lblDescarte.Text = "Comodin\nColor: " + partida.getColorActual();
             }
-            else if(carta.getValor() == 14)
+            else if (carta.getValor() == 14)
             {
                 lblDescarte.Text = "+4\nColor: " + partida.getColorActual();
             }

@@ -236,4 +236,3 @@
         private System.Windows.Forms.FlowLayoutPanel pnlMano3;
     }
 }
-

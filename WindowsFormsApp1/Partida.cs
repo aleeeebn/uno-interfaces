@@ -226,5 +226,19 @@ namespace WindowsFormsApp1
         {
             return comodinPendiente == 13 || comodinPendiente == 14;
         }
+
+        public Jugador getJugador(int indice)
+        {
+            if (indice >= 0 && indice < jugadores.Count)
+            {
+                return jugadores[indice];
+            }
+            return null;
+        }
+
+        public int getTurnoActual()
+        {
+            return turnoActual;
+        }
     }
 }
