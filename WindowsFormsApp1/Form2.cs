@@ -753,7 +753,7 @@ namespace WindowsFormsApp1
 
                 if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
 
-                // ¿Ganó?
+
                 if (partida.hayGanador())
                 {
                     TerminarPartida();
