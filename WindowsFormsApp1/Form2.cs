@@ -781,7 +781,7 @@ namespace WindowsFormsApp1
                 mesa.Invalidate();
             }
 
-            // ---- Robar carta ----
+            
             void AlRobar()
             {
                 if (mesa.MostrarSelectorColor) return;
