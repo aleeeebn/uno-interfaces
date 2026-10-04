@@ -760,7 +760,6 @@ namespace WindowsFormsApp1
                     return;
                 }
 
-                // Penalización si se quedó con 1 carta sin decir UNO
                 if (quienJuega.uno() && !unoDeclarado)
                 {
                     partida.robarCartas(quienJuega, 2);
