@@ -773,7 +773,7 @@ namespace WindowsFormsApp1
                 mesa.Invalidate();
             }
 
-            // ---- Elegir color tras un comodín ----
+            
             void AlElegirColor(string color)
             {
                 mesa.MostrarSelectorColor = false;
