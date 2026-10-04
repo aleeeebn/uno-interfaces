@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,6 +63,43 @@ namespace WindowsFormsApp1
                 default:
                     return Prefijo(col, false) + v + ".png";
             }
+        }
+
+        public static Image Obtener(Carta c)
+        {
+            string nombre = NombreArchivo(c);
+            Image img;
+            if (cache.TryGetValue(nombre, out img)) return img;
+
+            img = null;
+            string dir = BuscarCarpeta();
+            if (dir != null)
+            {
+                string ruta = Path.Combine(dir, nombre);
+                if (File.Exists(ruta))
+                {
+                    try
+                    {
+                        using (var fs = File.OpenRead(ruta))
+                        using (var original = Image.FromStream(fs))
+                        {
+                            // Se reduce una sola vez para que el dibujo sea rápido
+                            var bmp = new Bitmap(300, 420);
+                            using (var g = Graphics.FromImage(bmp))
+                            {
+                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                                g.SmoothingMode = SmoothingMode.AntiAlias;
+                                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                                g.DrawImage(original, 0, 0, 300, 420);
+                            }
+                            img = bmp;
+                        }
+                    }
+                    catch { img = null; }
+                }
+            }
+            cache[nombre] = img; // null = se dibuja carta de respaldo
+            return img;
         }
     }
 }
