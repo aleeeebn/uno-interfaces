@@ -695,6 +695,146 @@ namespace WindowsFormsApp1
             p.AddPolygon(pts);
             return p;
         }
+
+        public partial class Form2 : Form
+        {
+            Tablero mesa;
+            Partida partida;
+            bool unoDeclarado = false;
+
+            public Form2()
+            {
+                InitializeComponent();
+
+                Text = "UNO ♥";
+                ClientSize = new Size(1100, 720);
+                MinimumSize = new Size(900, 620);
+                StartPosition = FormStartPosition.CenterScreen;
+                BackColor = Color.FromArgb(255, 230, 225);
+                DoubleBuffered = true;
+
+                mesa = new Tablero { Dock = DockStyle.Fill };
+                Controls.Add(mesa);
+
+                mesa.SalirClick += () => Close();
+                mesa.CartaClick += AlHacerClicEnCarta;
+                mesa.RobarClick += AlRobar;
+                mesa.UnoClick += AlPresionarUno;
+                mesa.ColorElegido += AlElegirColor;
+
+                NuevaPartida();
+            }
+
+            void NuevaPartida()
+            {
+                partida = new Partida();
+                partida.repartir();
+                partida.iniciaDescarte();
+                unoDeclarado = false;
+
+                mesa.Partida = partida;
+                mesa.SentidoHorario = true;
+                mesa.MostrarSelectorColor = false;
+                mesa.Invalidate();
+            }
+
+            // ---- Jugar una carta ----
+            void AlHacerClicEnCarta(Carta carta)
+            {
+                if (mesa.MostrarSelectorColor) return;
+
+                if (!partida.sePuedeJugar(carta))
+                {
+                    mesa.MostrarMensaje("Esa carta no se puede jugar ♥");
+                    return;
+                }
+
+                Jugador quienJuega = partida.getJugadorActual();
+                partida.jugarCarta(carta);
+
+                if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
+
+                // ¿Ganó?
+                if (partida.hayGanador())
+                {
+                    TerminarPartida();
+                    return;
+                }
+
+                // Penalización si se quedó con 1 carta sin decir UNO
+                if (quienJuega.uno() && !unoDeclarado)
+                {
+                    partida.robarCartas(quienJuega, 2);
+                    mesa.MostrarMensaje(quienJuega.getNombre() + " olvidó decir UNO: +2 cartas");
+                }
+                unoDeclarado = false;
+
+                if (partida.necesitaElegirColor())
+                    mesa.MostrarSelectorColor = true;
+
+                mesa.Invalidate();
+            }
+
+            // ---- Elegir color tras un comodín ----
+            void AlElegirColor(string color)
+            {
+                mesa.MostrarSelectorColor = false;
+                partida.elegirColor(color);
+                mesa.Invalidate();
+            }
+
+            // ---- Robar carta ----
+            void AlRobar()
+            {
+                if (mesa.MostrarSelectorColor) return;
+
+                partida.robarCarta();
+                Jugador actual = partida.getJugadorActual();
+                List<Carta> mano = actual.getCartas();
+                Carta robada = mano[mano.Count - 1];
+
+                if (partida.sePuedeJugar(robada))
+                    mesa.MostrarMensaje("¡Puedes jugar la carta que robaste!");
+                else
+                {
+                    partida.siguienteTurno();
+                    mesa.MostrarMensaje("No se puede jugar, pasa el turno");
+                }
+                unoDeclarado = false;
+                mesa.Invalidate();
+            }
+
+            // ---- Botón UNO ----
+            void AlPresionarUno()
+            {
+                int cartas = partida.getJugadorActual().getCartas().Count;
+                if (cartas <= 2)
+                {
+                    unoDeclarado = true;
+                    mesa.MostrarMensaje("¡UNO! ♥");
+                }
+                else
+                {
+                    mesa.MostrarMensaje("Aún tienes muchas cartas ♥");
+                }
+            }
+
+            // ---- Fin de partida ----
+            void TerminarPartida()
+            {
+                Jugador ganador = partida.getGanador();
+                int idx = partida.getJugadores().IndexOf(ganador);
+                if (idx >= 0) mesa.Puntos[idx]++;
+                mesa.Invalidate();
+
+                DialogResult r = MessageBox.Show(
+                    "¡" + ganador.getNombre() + " ganó la partida! ♥\n\n¿Jugar otra vez?",
+                    "UNO", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                if (r == DialogResult.Yes) NuevaPartida();
+                else Close();
+            }
+        }
     }
 
 
