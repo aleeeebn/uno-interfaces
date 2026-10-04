@@ -738,7 +738,6 @@ namespace WindowsFormsApp1
                 mesa.Invalidate();
             }
 
-            // ---- Jugar una carta ----
             void AlHacerClicEnCarta(Carta carta)
             {
                 if (mesa.MostrarSelectorColor) return;
