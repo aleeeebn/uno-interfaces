@@ -10,11 +10,10 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApp1
 {
-    public partial class Form2 : Form
+    internal static class ImagenesUno
     {
-        public Form2()
-        {
-            InitializeComponent();
-        }
+        static readonly Dictionary<string, Image> cache = new Dictionary<string, Image>();
+        static string carpeta;
+        static bool buscada;
     }
 }
