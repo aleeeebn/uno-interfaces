@@ -94,6 +94,44 @@ namespace WindowsFormsApp1
             cache[nombre] = img; 
             return img;
         }
+        public static Image ObtenerReverso()
+        {
+            string nombre = "reverso.png";
+            Image img;
+            if (cache.TryGetValue(nombre, out img))
+                return img;
+            img = null;
+            string dir = BuscarCarpeta();
+            if (dir != null)
+            {
+                string ruta = Path.Combine(dir, nombre);
+                if (File.Exists(ruta))
+                {
+                    try
+                    {
+                        using (var fs = File.OpenRead(ruta))
+                        using (var original = Image.FromStream(fs))
+                        {
+                            var bmp = new Bitmap(300, 420);
+                            using (var g = Graphics.FromImage(bmp))
+                            {
+                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                                g.SmoothingMode = SmoothingMode.AntiAlias;
+                                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                                g.DrawImage(original, 0, 0, 300, 420);
+                            }
+                            img = bmp;
+                        }
+                    }
+                    catch
+                    {
+                        img = null;
+                    }
+                }
+            }
+            cache[nombre] = img;
+            return img;
+        }
     }
 
     internal class Tablero : Control
@@ -276,9 +314,9 @@ namespace WindowsFormsApp1
                     x += sz.Width * 0.78f;
                 }
             }
-            using (var p = Corazon(new RectangleF(22 + fs * 2.4f, 18, fs * 0.4f, fs * 0.36f)))
-            using (var b = new SolidBrush(RosaFuerte))
-                g.FillPath(b, p);
+            //using (var p = Corazon(new RectangleF(22 + fs * 2.4f, 18, fs * 0.4f, fs * 0.36f)))
+            ///using (var b = new SolidBrush(RosaFuerte))
+                //g.FillPath(b, p);
         }
 
         void DibujarMesa(Graphics g, float W, float H, float cw, float ch)
@@ -292,7 +330,7 @@ namespace WindowsFormsApp1
             using (var p = new Pen(Color.FromArgb(190, 255, 255, 255), 4) { DashStyle = DashStyle.Dot })
                 g.DrawEllipse(p, mesa);
 
-            string turno = "Turno de " + Partida.getJugadorActual().getNombre() + " ♥";
+            string turno = "Turno de " + Partida.getJugadorActual().getNombre();
             using (var f = new Font("Segoe UI", Math.Max(14f, H * 0.032f), FontStyle.Bold, GraphicsUnit.Pixel))
             {
                 SizeF sz = g.MeasureString(turno, f);
@@ -318,7 +356,7 @@ namespace WindowsFormsApp1
                 using (var pen = new Pen(Color.FromArgb(200, 255, 255, 255), 3) { DashStyle = DashStyle.Dash })
                     g.DrawPath(pen, p);
 
-            float hs = Math.Max(40f, H * 0.08f);
+            /*float hs = Math.Max(40f, H * 0.08f);
             var rc = new RectangleF(desc.Right + 26, cy - hs / 2 - 10, hs, hs * 0.9f);
             using (var p = Corazon(rc))
             {
@@ -327,7 +365,15 @@ namespace WindowsFormsApp1
             }
             using (var f = new Font("Segoe UI", Math.Max(11f, H * 0.02f), FontStyle.Bold, GraphicsUnit.Pixel))
                 Texto(g, "Color", f, Cafe, new RectangleF(rc.X - 10, rc.Bottom + 10, hs + 20, 20));
-
+            */
+            float hs = Math.Max(40f, H * 0.08f);
+            var rc = new RectangleF(desc.Right + 26, cy - hs / 2 - 10, hs, hs);
+            using (var b = new SolidBrush(ColorDe(Partida.getColorActual())))
+                g.FillEllipse(b, rc);
+            using (var pen = new Pen(Color.White, 4))
+                g.DrawEllipse(pen, rc);
+            using (var f = new Font("Segoe UI", Math.Max(11f, H * 0.02f), FontStyle.Bold, GraphicsUnit.Pixel))
+                Texto(g, "Color", f, Cafe, new RectangleF(rc.X - 10, rc.Bottom + 10, hs + 20, 20));
             float ds = Math.Max(40f, H * 0.075f);
             var rd = new RectangleF(mazo.X - ds - 40, cy - ds / 2 - 10, ds, ds);
             g.FillEllipse(Brushes.White, rd);
@@ -432,7 +478,7 @@ namespace WindowsFormsApp1
                 using (var pen = new Pen(RosaFuerte, 4)) g.DrawPath(pen, p);
             }
             using (var f = new Font("Segoe UI", Math.Max(14f, H * 0.03f), FontStyle.Bold, GraphicsUnit.Pixel))
-                Texto(g, "Elige un color ♥", f, Cafe, new RectangleF(panel.X, panel.Y + 8, panel.Width, 40));
+                Texto(g, "Elige un color", f, Cafe, new RectangleF(panel.X, panel.Y + 8, panel.Width, 40));
 
             string[] nombres = { "Rojo", "Amarillo", "Verde", "Azul" };
             for (int i = 0; i < 4; i++)
@@ -561,27 +607,16 @@ namespace WindowsFormsApp1
                 Texto(g, t, f, Color.White, new RectangleF(r.Right - r.Width * 0.38f - 2, r.Bottom - r.Height * 0.18f - 3, r.Width * 0.38f, r.Height * 0.18f));
             }
         }
-
         void DibujarReverso(Graphics g, RectangleF r)
         {
             Sombra(g, r);
-            float rad = r.Width * 0.12f;
-
-            using (var p = Redondo(r, rad))
+            Image img = ImagenesUno.ObtenerReverso();
+            if (img != null)
             {
-                using (var b = new LinearGradientBrush(r, Lavanda, Color.FromArgb(255, 190, 215), 70f))
-                    g.FillPath(b, p);
-                using (var pen = new Pen(Color.White, 3.5f)) g.DrawPath(pen, p);
+                g.DrawImage(img, r);
+                return;
             }
-            var ov = new RectangleF(r.X + r.Width * 0.14f, r.Y + r.Height * 0.22f, r.Width * 0.72f, r.Height * 0.56f);
-            using (var b = new SolidBrush(Color.FromArgb(235, Crema))) g.FillEllipse(b, ov);
-            using (var f = new Font("Segoe UI", r.Height * 0.22f, FontStyle.Bold, GraphicsUnit.Pixel))
-                Texto(g, "UNO", f, RosaFuerte, ov);
-            using (var p = Corazon(new RectangleF(r.X + r.Width * 0.12f, r.Y + r.Height * 0.06f, r.Width * 0.16f, r.Width * 0.14f)))
-            using (var b = new SolidBrush(Color.White))
-                g.FillPath(b, p);
         }
-
         public static Color ColorDe(string c)
         {
             switch (c)
@@ -683,7 +718,7 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
 
-            Text = "UNO ♥";
+            Text = "UNO";
             ClientSize = new Size(1100, 720);
             MinimumSize = new Size(900, 620);
             StartPosition = FormStartPosition.CenterScreen;
@@ -721,7 +756,7 @@ namespace WindowsFormsApp1
 
             if (!partida.sePuedeJugar(carta))
             {
-                mesa.MostrarMensaje("Esa carta no se puede jugar ♥");
+                mesa.MostrarMensaje("Esa carta no se puede jugar");
                 return;
             }
 
@@ -782,11 +817,11 @@ namespace WindowsFormsApp1
             if (cartas <= 2)
             {
                 unoDeclarado = true;
-                mesa.MostrarMensaje("¡UNO! ♥");
+                mesa.MostrarMensaje("¡UNO!");
             }
             else
             {
-                mesa.MostrarMensaje("Aún tienes muchas cartas ♥");
+                mesa.MostrarMensaje("Aún tienes muchas cartas");
             }
         }
 
@@ -798,7 +833,7 @@ namespace WindowsFormsApp1
             mesa.Invalidate();
 
             DialogResult r = MessageBox.Show(
-                "¡" + ganador.getNombre() + " ganó la partida! ♥\n\n¿Jugar otra vez?",
+                "¡" + ganador.getNombre() + " ganó la partida!\n\n¿Jugar otra vez?",
                 "UNO", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
             if (r == DialogResult.Yes) NuevaPartida();
