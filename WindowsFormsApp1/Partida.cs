@@ -160,15 +160,17 @@ namespace WindowsFormsApp1
             mazo.removeCarta(i);
             colorActual = carta.getColor();
         }
-        public void robarCarta()
+        public Carta robarCarta()
         {
             siMazoEstaVacio();
-            if (!mazo.estaVacio())
-            {
-                Carta carta = mazo.getCarta(0);
-                jugadores[turnoActual].añadirCarta(carta);
-                mazo.removeCarta(0);
-            }
+            if (mazo.estaVacio())
+                return null;
+            Carta carta = mazo.getCarta(0);
+            jugadores[turnoActual].añadirCarta(carta);
+            mazo.removeCarta(0);
+            jugadores[turnoActual].añadirCarta(carta);
+            mazo.removeCarta(0);
+            return carta;
         }
         public void robarCartas(Jugador jugador, int cantidad)
         {

@@ -565,8 +565,6 @@ namespace WindowsFormsApp1
         void DibujarCara(Graphics g, RectangleF r, Carta c)
         {
             Sombra(g, r);
-
-           
             Image img = ImagenesUno.Obtener(c);
             if (img != null)
             {
@@ -713,6 +711,7 @@ namespace WindowsFormsApp1
         Tablero mesa;
         Partida partida;
         bool unoDeclarado = false;
+        Carta cartaRobadaPendiente = null;
 
         public Form2()
         {
@@ -752,6 +751,11 @@ namespace WindowsFormsApp1
 
         void AlHacerClicEnCarta(Carta carta)
         {
+            if(cartaRobadaPendiente != null && carta != cartaRobadaPendiente)
+            {
+                mesa.MostrarMensaje("Después de robar solo puedes jugar la carta robada");
+                return;
+            }
             if (mesa.MostrarSelectorColor) return;
 
             if (!partida.sePuedeJugar(carta))
@@ -762,6 +766,7 @@ namespace WindowsFormsApp1
 
             Jugador quienJuega = partida.getJugadorActual();
             partida.jugarCarta(carta);
+            cartaRobadaPendiente = null;
 
             if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
 
@@ -794,14 +799,17 @@ namespace WindowsFormsApp1
         void AlRobar()
         {
             if (mesa.MostrarSelectorColor) return;
-
-            partida.robarCarta();
-            Jugador actual = partida.getJugadorActual();
-            List<Carta> mano = actual.getCartas();
-            Carta robada = mano[mano.Count - 1];
-
-            if (partida.sePuedeJugar(robada))
+            if(cartaRobadaPendiente != null)
+            {
+                mesa.MostrarMensaje("Ya robaste una carta");
+                return;
+            }
+            Carta robada = partida.robarCarta();
+            if (robada == null) return;
+            if (partida.sePuedeJugar(robada)) {
+                cartaRobadaPendiente = robada;
                 mesa.MostrarMensaje("¡Puedes jugar la carta que robaste!");
+            }
             else
             {
                 partida.siguienteTurno();
