@@ -30,6 +30,14 @@ namespace WindowsFormsApp1
             comodinPendiente = 0;
             agregarJugadoresDefault();
         }
+        public Jugador getJugador(int indice)
+        {
+            if (indice >= 0 && indice < jugadores.Count)
+            {
+                return jugadores[indice];
+            }
+            return null;
+        }
         public int getTurnoActual()
         {
             return turnoActual;
@@ -41,10 +49,6 @@ namespace WindowsFormsApp1
         public Jugador getJugadorActual()
         {
             return jugadores[turnoActual];
-        }
-        public Jugador getJugador(int index)
-        {
-            return jugadores[index];
         }
         public List<Jugador> getJugadores()
         {
@@ -156,15 +160,17 @@ namespace WindowsFormsApp1
             mazo.removeCarta(i);
             colorActual = carta.getColor();
         }
-        public void robarCarta()
+        public Carta robarCarta()
         {
             siMazoEstaVacio();
-            if (!mazo.estaVacio())
-            {
-                Carta carta = mazo.getCarta(0);
-                jugadores[turnoActual].añadirCarta(carta);
-                mazo.removeCarta(0);
-            }
+            if (mazo.estaVacio())
+                return null;
+            Carta carta = mazo.getCarta(0);
+            jugadores[turnoActual].añadirCarta(carta);
+            mazo.removeCarta(0);
+            jugadores[turnoActual].añadirCarta(carta);
+            mazo.removeCarta(0);
+            return carta;
         }
         public void robarCartas(Jugador jugador, int cantidad)
         {
@@ -225,20 +231,6 @@ namespace WindowsFormsApp1
         public bool necesitaElegirColor()
         {
             return comodinPendiente == 13 || comodinPendiente == 14;
-        }
-
-        public Jugador getJugador(int indice)
-        {
-            if (indice >= 0 && indice < jugadores.Count)
-            {
-                return jugadores[indice];
-            }
-            return null;
-        }
-
-        public int getTurnoActual()
-        {
-            return turnoActual;
         }
     }
 }
