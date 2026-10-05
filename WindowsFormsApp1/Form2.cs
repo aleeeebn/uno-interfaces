@@ -514,9 +514,9 @@ namespace WindowsFormsApp1
             Boton(g, new RectangleF(W - bs - 16, 14, bs, bs), Color.FromArgb(255, 160, 175), "✕",
                   () => { if (SalirClick != null) SalirClick(); }, Color.White, bs * 0.5f, false);
 
-            Boton(g, new RectangleF(W - bs * 2 - 28, 14, bs, bs), Lavanda, "♪",
+            /*Boton(g, new RectangleF(W - bs * 2 - 28, 14, bs, bs), Lavanda, "♪",
                   () => { Silencio = !Silencio; Invalidate(); },
-                  Color.White, bs * 0.55f, Silencio);
+                  Color.White, bs * 0.55f, Silencio); */
 
             float us = Math.Max(80f, H * 0.14f);
             Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), Coral, "UNO!",
