@@ -618,14 +618,16 @@ namespace WindowsFormsApp1
                   Color.White, bs * 0.55f, Silencio); */
 
             float us = Math.Max(80f, H * 0.14f);
-            Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), Coral, "UNO!",
-                  () => { if (UnoClick != null) UnoClick(); }, Color.White, us * 0.26f, false);
+            bool unoDisponible = Partida != null && Partida.getJugadorActual().getCartas().Count <= 2;
+            Color colorBoton = unoDisponible ? Coral : Color.FromArgb(175, 175, 175);
+            Color colorTexto = unoDisponible ? Color.White : Color.FromArgb(225, 225, 225);
+            Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), colorBoton, "UNO!", unoDisponible ? (Action)(() => { if (UnoClick != null) UnoClick(); }) : null, colorTexto, us * 0.26f, false);
         }
 
         void Boton(Graphics g, RectangleF r, Color fill, string txt, Action accion,
                    Color colTxt, float fs, bool tachado)
         {
-            bool h = r.Contains(mouse);
+            bool h = accion != null && r.Contains(mouse);
             RectangleF rr = h ? RectangleF.Inflate(r, 3, 3) : r;
 
             using (var b = new SolidBrush(Color.FromArgb(50, Cafe)))
@@ -638,8 +640,8 @@ namespace WindowsFormsApp1
                 using (var p = new Pen(Color.White, 4) { StartCap = LineCap.Round, EndCap = LineCap.Round })
                     g.DrawLine(p, rr.X + rr.Width * 0.22f, rr.Y + rr.Height * 0.2f,
                                   rr.Right - rr.Width * 0.22f, rr.Bottom - rr.Height * 0.2f);
-
-            zonas.Add(new Zona { R = r, Accion = accion });
+            if(accion != null)
+                zonas.Add(new Zona { R = r, Accion = accion });
         }
 
         void Rotar(Graphics g, RectangleF bounds, float ang, Action<RectangleF> dibuja)
