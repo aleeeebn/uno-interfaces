@@ -153,7 +153,9 @@ namespace WindowsFormsApp1
         public bool MostrarVictoria = false;
         public bool MostrarMenu = false;
         public string NombreGanador = "";
+        public bool AcusarUnoDisponible = false;
 
+        public event Action AcusarUnoClick;
         public event Action VolverAJugarClick;
         public event Action IrMenuClick;
         public event Action<Carta> CartaClick;
@@ -295,12 +297,8 @@ namespace WindowsFormsApp1
             }
             using (var titulo = new Font("Segoe UI", 30, FontStyle.Bold, GraphicsUnit.Pixel))
             {
-                Texto(g, "¡TENEMOS GANADOR!", titulo, Cafe, new RectangleF(panel.X, panel.Y + 28, pw, 48));
+                Texto(g, "Fin de la partida", titulo, Cafe, new RectangleF(panel.X, panel.Y + 28, pw, 48));
             }
-            /*using (var corona = new Font("Segoe UI Emoji", 43, FontStyle.Regular, GraphicsUnit.Pixel))
-            {
-                Texto(g, "🏆", corona, Cafe, new RectangleF(panel.X, panel.Y + 70, pw, 60));
-            }*/
             using (var nombre = new Font("Segoe UI", 27, FontStyle.Bold, GraphicsUnit.Pixel))
             {
                 Texto(g, NombreGanador, nombre, RosaFuerte, new RectangleF(panel.X, panel.Y + 115, pw, 42));
@@ -937,6 +935,7 @@ namespace WindowsFormsApp1
         Partida partida;
         bool unoDeclarado = false;
         Carta cartaRobadaPendiente = null;
+        Jugador jugadorSinUno = null;
 
         public Form2()
         {
@@ -965,7 +964,6 @@ namespace WindowsFormsApp1
                 mesa.MostrarMenu = false;
                 mesa.Invalidate();
             };
-
             NuevaPartida();
         }
 
@@ -1017,9 +1015,12 @@ namespace WindowsFormsApp1
 
             if (quienJuega.uno() && !unoDeclarado)
             {
-                partida.robarCartas(quienJuega, 2);
-                mesa.MostrarMensaje(quienJuega.getNombre() + " olvidó decir UNO: +2 cartas");
+                jugadorSinUno = quienJuega;
+            } else
+            {
+                jugadorSinUno = null;
             }
+            mesa.AcusarUnoDisponible = jugadorSinUno != null;
             unoDeclarado = false;
 
             if (partida.necesitaElegirColor())
