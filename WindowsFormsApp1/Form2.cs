@@ -618,7 +618,7 @@ namespace WindowsFormsApp1
                   Color.White, bs * 0.55f, Silencio); */
 
             float us = Math.Max(80f, H * 0.14f);
-            bool unoDisponible = Partida != null && Partida.getJugadorActual().getCartas().Count <= 2;
+            bool unoDisponible = Partida != null && Partida.getJugadorActual().getCartas().Count == 2;
             Color colorBoton = unoDisponible ? Coral : Color.FromArgb(175, 175, 175);
             Color colorTexto = unoDisponible ? Color.White : Color.FromArgb(225, 225, 225);
             Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), colorBoton, "UNO!", unoDisponible ? (Action)(() => { if (UnoClick != null) UnoClick(); }) : null, colorTexto, us * 0.26f, false);
@@ -990,7 +990,7 @@ namespace WindowsFormsApp1
         void AlPresionarUno()
         {
             int cartas = partida.getJugadorActual().getCartas().Count;
-            if (cartas <= 2)
+            if (cartas == 2)
             {
                 unoDeclarado = true;
                 mesa.MostrarMensaje("¡UNO!");
