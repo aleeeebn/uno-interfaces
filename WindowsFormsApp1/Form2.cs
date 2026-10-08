@@ -148,13 +148,15 @@ namespace WindowsFormsApp1
         public bool SentidoHorario = true;
         public bool MostrarSelectorColor = false;
         public bool Silencio = false;
+        public bool PasarDisponible = false;
         public string Mensaje = "";
 
         public event Action<Carta> CartaClick;
         public event Action RobarClick;
         public event Action UnoClick;
         public event Action SalirClick;
-        public event Action<string> ColorElegido;  
+        public event Action<string> ColorElegido;
+        public event Action PasarClick;
 
         static readonly Color Crema = Color.FromArgb(255, 240, 225);
         static readonly Color Rosa = Color.FromArgb(255, 214, 224);
@@ -338,6 +340,9 @@ namespace WindowsFormsApp1
             }
 
             var mazo = new RectangleF(cx - cw - 14, cy - ch / 2, cw, ch);
+            float ps = Math.Max(55f, H * 0.09f);
+            Color colorPasar = PasarDisponible ? Lavanda : Color.FromArgb(175, 175, 175);
+            Boton( g, new RectangleF(mazo.Left - ps - 22, mazo.Top + (mazo.Height - ps) / 2, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false);
             for (int i = 2; i >= 1; i--)
                 DibujarReverso(g, new RectangleF(mazo.X - i * 3, mazo.Y - i * 3, cw, ch));
             DibujarReverso(g, mazo);
@@ -622,6 +627,9 @@ namespace WindowsFormsApp1
             Color colorBoton = unoDisponible ? Coral : Color.FromArgb(175, 175, 175);
             Color colorTexto = unoDisponible ? Color.White : Color.FromArgb(225, 225, 225);
             Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), colorBoton, "UNO!", unoDisponible ? (Action)(() => { if (UnoClick != null) UnoClick(); }) : null, colorTexto, us * 0.26f, false);
+            /*float ps = Math.Max(65f, H * 0.10f);
+            Color colorPasar = PasarDisponible ? Lavanda : Color.FromArgb(175, 175, 175);
+            Boton(g, new RectangleF( W - ps - 20, H - us - ps - 40, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false); */
         }
 
         void Boton(Graphics g, RectangleF r, Color fill, string txt, Action accion,
@@ -714,73 +722,6 @@ namespace WindowsFormsApp1
             {
                 g.DrawImage(img, r);
                 return;
-            }
-        }
-        void DibujarRuedaTurno(Graphics g, float cx, float cy, float radioExterior, float radioInterior)
-        {
-            RectangleF outer = new RectangleF(cx - radioExterior,cy - radioExterior, radioExterior * 2, radioExterior * 2);
-            Color[] colores = { Color.FromArgb(255, 235, 70, 70), Color.FromArgb(255, 245, 220, 60), Color.FromArgb(255, 70, 205, 110), Color.FromArgb(255, 70, 170, 235)};
-            using (var sb = new SolidBrush(Color.FromArgb(45, 0, 0, 0)))
-            {
-                g.FillEllipse(sb, outer.X + 5, outer.Y + 8, outer.Width, outer.Height);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                using (var b = new SolidBrush(colores[i]))
-                {
-                    g.FillPie(b, outer.X, outer.Y, outer.Width, outer.Height, i * 90f, 90f);
-                }
-            }
-            using (var pen = new Pen(Color.FromArgb(220, 255, 255, 255), 4))
-            {
-                g.DrawEllipse(pen, outer);
-            }
-            RectangleF inner = new RectangleF(cx - radioInterior, cy - radioInterior, radioInterior * 2, radioInterior * 2);
-            using (var b = new SolidBrush(Color.FromArgb(230, 255, 250, 245)))
-            {
-                g.FillEllipse(b, inner);
-            }
-            using (var pen = new Pen(Color.FromArgb(180, 255, 255, 255), 3))
-            {
-                g.DrawEllipse(pen, inner);
-            }
-            DibujarFlechaCircular(g, cx, cy, (radioExterior + radioInterior) / 2f, SentidoHorario);
-        }
-        void DibujarFlechaCircular(Graphics g, float cx, float cy, float radio, bool horario)
-        {
-            float grosor = Math.Max(8f, radio * 0.12f);
-            float startAngle = horario ? 220f : -40f;
-            float sweepAngle = horario ? 240f : -240f;
-
-            RectangleF arco = new RectangleF(cx - radio, cy - radio, radio * 2, radio * 2);
-            using (var pen = new Pen(Color.White, grosor))
-            {
-                pen.StartCap = LineCap.Round;
-                pen.EndCap = LineCap.Round;
-                g.DrawArc(pen, arco, startAngle, sweepAngle);
-            }
-            float endAngle = startAngle + sweepAngle;
-            double rad = Math.PI * endAngle / 180.0;
-
-            float px = cx + (float)Math.Cos(rad) * radio;
-            float py = cy + (float)Math.Sin(rad) * radio;
-            double tang = horario ? rad + Math.PI / 2.0 : rad - Math.PI / 2.0;
-
-            float tam = Math.Max(14f, radio * 0.18f);
-
-            PointF punta = new PointF(px, py);
-            PointF p1 = new PointF(
-                px - (float)Math.Cos(tang) * tam - (float)Math.Cos(rad) * tam * 0.45f,
-                py - (float)Math.Sin(tang) * tam - (float)Math.Sin(rad) * tam * 0.45f
-            );
-            PointF p2 = new PointF(
-                px + (float)Math.Cos(tang) * tam - (float)Math.Cos(rad) * tam * 0.45f,
-                py + (float)Math.Sin(tang) * tam - (float)Math.Sin(rad) * tam * 0.45f
-            );
-
-            using (var b = new SolidBrush(Color.White))
-            {
-                g.FillPolygon(b, new[] { punta, p1, p2 });
             }
         }
         public static Color ColorDe(string c)
@@ -900,6 +841,7 @@ namespace WindowsFormsApp1
             mesa.RobarClick += AlRobar;
             mesa.UnoClick += AlPresionarUno;
             mesa.ColorElegido += AlElegirColor;
+            mesa.PasarClick += AlPasar;
 
             NuevaPartida();
         }
@@ -914,6 +856,8 @@ namespace WindowsFormsApp1
             mesa.Partida = partida;
             mesa.SentidoHorario = true;
             mesa.MostrarSelectorColor = false;
+            cartaRobadaPendiente = null;
+            mesa.PasarDisponible = false;
             mesa.Invalidate();
         }
 
@@ -935,6 +879,7 @@ namespace WindowsFormsApp1
             Jugador quienJuega = partida.getJugadorActual();
             partida.jugarCarta(carta);
             cartaRobadaPendiente = null;
+            mesa.PasarDisponible = false;
 
             if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
 
@@ -976,10 +921,13 @@ namespace WindowsFormsApp1
             if (robada == null) return;
             if (partida.sePuedeJugar(robada)) {
                 cartaRobadaPendiente = robada;
+                mesa.PasarDisponible = true;
                 mesa.MostrarMensaje("¡Puedes jugar la carta que robaste!");
             }
             else
             {
+                cartaRobadaPendiente = null;
+                mesa.PasarDisponible = false;
                 partida.siguienteTurno();
                 mesa.MostrarMensaje("No se puede jugar, pasa el turno");
             }
@@ -999,6 +947,19 @@ namespace WindowsFormsApp1
             {
                 mesa.MostrarMensaje("Aún tienes muchas cartas");
             }
+        }
+        void AlPasar()
+        {
+            if (cartaRobadaPendiente == null || mesa.MostrarSelectorColor)
+                return;
+            cartaRobadaPendiente = null;
+            unoDeclarado = false;
+
+            partida.siguienteTurno();
+
+            mesa.PasarDisponible = false;
+            mesa.MostrarMensaje("Turno pasado");
+            mesa.Invalidate();
         }
 
         void TerminarPartida()
