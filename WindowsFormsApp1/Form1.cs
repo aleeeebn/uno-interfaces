@@ -39,13 +39,15 @@ namespace WindowsFormsApp1
                 partida.jugarCarta(carta);
                 lblDescarte.Text = carta.ToString();
                 roboEsteTurno = false;
-                
+
                 actualizarCantidadCartas();
                 if (partida.hayGanador())
                 {
                     Jugador ganador = partida.getGanador();
                     MessageBox.Show("¡" + ganador.getNombre() + " ganó la partida!");
                     pnlMano.Controls.Clear();
+                    pnlMano3.Controls.Clear();
+                    pnlMano2.Controls.Clear();
                     btnmazo.Enabled = false;
                     btnpasar.Enabled = false;
                     return;
@@ -56,11 +58,13 @@ namespace WindowsFormsApp1
                     pnlMano.Enabled = false;
                     btnmazo.Enabled = false;
                     btnpasar.Enabled = false;
-                } else
+                }
+                else
                 {
                     mostrarJugadorActual();
                 }
-            } else
+            }
+            else
             {
                 MessageBox.Show("No se puede jugar esa carta");
             }
@@ -68,9 +72,32 @@ namespace WindowsFormsApp1
         private void mostrarJugadorActual()
         {
             pnlMano.Controls.Clear();
-            Jugador jugador = partida.getJugadorActual();
-            lblturno.Text = "Turno de: " + jugador.getNombre();
-            foreach(Carta carta in jugador.getCartas())
+            pnlMano2.Controls.Clear();
+            pnlMano3.Controls.Clear();
+            Jugador jugador1 = partida.getJugador(0);
+            Jugador jugador2 = partida.getJugador(1);
+            Jugador jugador3 = partida.getJugador(2);
+            int turnoActual = partida.getTurnoActual();
+            lblturno.Text = "Turno de: " + partida.getJugador(turnoActual).ToString();
+            switch (turnoActual)
+            {
+                case 0:
+                    pnlMano.Enabled = true;
+                    pnlMano2.Enabled = false;
+                    pnlMano3.Enabled = false;
+                    break;
+                case 1:
+                    pnlMano.Enabled = false;
+                    pnlMano2.Enabled = true;
+                    pnlMano3.Enabled = false;
+                    break;
+                case 2:
+                    pnlMano.Enabled = false;
+                    pnlMano2.Enabled = false;
+                    pnlMano3.Enabled = true;
+                    break;
+            }
+            foreach(Carta carta in jugador1.getCartas())
             {
                 Button botonCarta = new Button();
                 botonCarta.Width = 80;
@@ -79,6 +106,26 @@ namespace WindowsFormsApp1
                 botonCarta.Tag = carta;
                 botonCarta.Click += jugarCarta;
                 pnlMano.Controls.Add(botonCarta);
+            }
+            foreach (Carta carta in jugador2.getCartas())
+            {
+                Button botonCarta = new Button();
+                botonCarta.Width = 80;
+                botonCarta.Height = 120;
+                botonCarta.Text = carta.ToString();
+                botonCarta.Tag = carta;
+                botonCarta.Click += jugarCarta;
+                pnlMano2.Controls.Add(botonCarta);
+            }
+            foreach (Carta carta in jugador3.getCartas())
+            {
+                Button botonCarta = new Button();
+                botonCarta.Width = 80;
+                botonCarta.Height = 120;
+                botonCarta.Text = carta.ToString();
+                botonCarta.Tag = carta;
+                botonCarta.Click += jugarCarta;
+                pnlMano3.Controls.Add(botonCarta);
             }
         }
         private void mostrarBotonesColor(bool mostrar)
@@ -173,14 +220,29 @@ namespace WindowsFormsApp1
         private void actualizarDescarteComodin()
         {
             Carta carta = partida.getJuego().getUltimaCarta();
-            if(carta.getValor() == 13)
+            if (carta.getValor() == 13)
             {
                 lblDescarte.Text = "Comodin\nColor: " + partida.getColorActual();
             }
-            else if(carta.getValor() == 14)
+            else if (carta.getValor() == 14)
             {
                 lblDescarte.Text = "+4\nColor: " + partida.getColorActual();
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblMazo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
