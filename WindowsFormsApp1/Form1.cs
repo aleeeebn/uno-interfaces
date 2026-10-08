@@ -97,7 +97,7 @@ namespace WindowsFormsApp1
                     pnlMano3.Enabled = true;
                     break;
             }
-            foreach (Carta carta in jugador1.getCartas())
+            foreach(Carta carta in jugador1.getCartas())
             {
                 Button botonCarta = new Button();
                 botonCarta.Width = 80;
