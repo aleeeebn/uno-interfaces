@@ -374,52 +374,77 @@ namespace WindowsFormsApp1
                 Texto(g, "Color", f, Cafe, new RectangleF(rc.X - 10, rc.Bottom + 10, hs + 20, 20));
         }
 
+
         void DibujarMano(Graphics g, int seat, float W, float H, float cw, float ch)
         {
             List<Carta> mano = JugadorEnAsiento(seat).getCartas();
             int n = mano.Count;
             if (n == 0) return;
 
+            bool turnoActivo = seat == Partida.getTurnoActual();
+            float elevacion = 22f;
+
             for (int i = 0; i < n; i++)
             {
+                Carta carta = mano[i];
+
+                bool jugable = turnoActivo && !MostrarSelectorColor && Partida.sePuedeJugar(carta);
+
+                bool hov = turnoActivo && !MostrarSelectorColor && hoverI == i;
+
                 RectangleF bounds;
                 float ang = 0;
-                PointF off = new PointF(0, 0);
-                bool activo = seat == Partida.getTurnoActual();
-                bool hov = activo && !MostrarSelectorColor && hoverI == i;
 
                 if (seat == 0)
                 {
                     float step = n > 1 ? Math.Min(cw * 0.8f, (W * 0.6f - cw) / (n - 1)) : 0;
+
                     float total = cw + step * (n - 1);
                     float x0 = (W - total) / 2;
-                    bounds = new RectangleF(x0 + i * step, H - ch - 26, cw, ch);
-                    if (hov) off = new PointF(0, -22);
+
+                    bounds = new RectangleF( x0 + i * step, H - ch - 26, cw, ch );
+
+                    if (jugable)
+                        bounds.Y -= elevacion;
+
+                    if (hov)
+                        bounds.Y -= 12f;
                 }
                 else
                 {
                     float step = n > 1 ? Math.Min(cw * 0.5f, (H * 0.55f - cw) / (n - 1)) : 0;
+
                     float total = cw + step * (n - 1);
                     float y0 = H * 0.5f - total / 2 + 30;
+
                     float cx = seat == 1 ? 16 + ch / 2 : W - 16 - ch / 2;
+
                     float cy = y0 + cw / 2 + i * step;
-                    bounds = new RectangleF(cx - ch / 2, cy - cw / 2, ch, cw);
+
+                    bounds = new RectangleF( cx - ch / 2, cy - cw / 2, ch, cw);
+
                     ang = seat == 1 ? 90 : -90;
+
+                    if (jugable)
+                    {
+                        if (seat == 1)
+                            bounds.X += elevacion;
+                        else
+                            bounds.X -= elevacion;
+                    }
+                    if (hov)
+                    {
+                        if (seat == 1)
+                            bounds.X += 12f;
+                        else
+                            bounds.X -= 12f;
+                    }
                 }
-
-                var dib = new RectangleF(bounds.X + off.X, bounds.Y + off.Y, bounds.Width, bounds.Height);
-                Carta carta = mano[i];
-                bool visible = true; 
-                Rotar(g, dib, ang, r =>
-                {
-                    if (visible) DibujarCara(g, r, carta);
-                    else DibujarReverso(g, r);
-                });
-
-                if (activo && !MostrarSelectorColor) 
+                Rotar(g, bounds, ang, r => { DibujarCara(g, r, carta); });
+                if (turnoActivo && !MostrarSelectorColor)
                 {
                     int ii = i;
-                    zonas.Add(new Zona{R = bounds, Indice = ii, Accion = () => { if (CartaClick != null) CartaClick(carta); } });
+                    zonas.Add(new Zona { R = bounds, Indice = ii, Accion = () => { if (CartaClick != null) CartaClick(carta); } });
                 }
             }
         }
