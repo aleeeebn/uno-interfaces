@@ -148,13 +148,15 @@ namespace WindowsFormsApp1
         public bool SentidoHorario = true;
         public bool MostrarSelectorColor = false;
         public bool Silencio = false;
+        public bool PasarDisponible = false;
         public string Mensaje = "";
 
         public event Action<Carta> CartaClick;
         public event Action RobarClick;
         public event Action UnoClick;
         public event Action SalirClick;
-        public event Action<string> ColorElegido;  
+        public event Action<string> ColorElegido;
+        public event Action PasarClick;
 
         static readonly Color Crema = Color.FromArgb(255, 240, 225);
         static readonly Color Rosa = Color.FromArgb(255, 214, 224);
@@ -260,14 +262,12 @@ namespace WindowsFormsApp1
 
         Jugador JugadorEnAsiento(int seat)
         {
-            int n = Partida.getJugadores().Count;
-            return Partida.getJugador((Partida.getTurnoActual() + seat) % n);
+            return Partida.getJugador(seat);
         }
 
         int IndiceEnAsiento(int seat)
         {
-            int n = Partida.getJugadores().Count;
-            return (Partida.getTurnoActual() + seat) % n;
+            return seat;
         }
 
         void DibujarFondo(Graphics g, float W, float H)
@@ -329,7 +329,7 @@ namespace WindowsFormsApp1
                 g.FillEllipse(b, mesa);
             using (var p = new Pen(Color.FromArgb(190, 255, 255, 255), 4) { DashStyle = DashStyle.Dot })
                 g.DrawEllipse(p, mesa);
-
+            DibujarIndicadorDireccion(g, mesa, SentidoHorario);
             string turno = "Turno de " + Partida.getJugadorActual().getNombre();
             using (var f = new Font("Segoe UI", Math.Max(14f, H * 0.032f), FontStyle.Bold, GraphicsUnit.Pixel))
             {
@@ -340,6 +340,9 @@ namespace WindowsFormsApp1
             }
 
             var mazo = new RectangleF(cx - cw - 14, cy - ch / 2, cw, ch);
+            float ps = Math.Max(55f, H * 0.09f);
+            Color colorPasar = PasarDisponible ? Lavanda : Color.FromArgb(175, 175, 175);
+            Boton( g, new RectangleF(mazo.Left - ps - 22, mazo.Top + (mazo.Height - ps) / 2, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false);
             for (int i = 2; i >= 1; i--)
                 DibujarReverso(g, new RectangleF(mazo.X - i * 3, mazo.Y - i * 3, cw, ch));
             DibujarReverso(g, mazo);
@@ -374,13 +377,8 @@ namespace WindowsFormsApp1
                 g.DrawEllipse(pen, rc);
             using (var f = new Font("Segoe UI", Math.Max(11f, H * 0.02f), FontStyle.Bold, GraphicsUnit.Pixel))
                 Texto(g, "Color", f, Cafe, new RectangleF(rc.X - 10, rc.Bottom + 10, hs + 20, 20));
-            float ds = Math.Max(40f, H * 0.075f);
-            var rd = new RectangleF(mazo.X - ds - 40, cy - ds / 2 - 10, ds, ds);
-            g.FillEllipse(Brushes.White, rd);
-            using (var pen = new Pen(Menta, 4)) g.DrawEllipse(pen, rd);
-            using (var f = new Font("Segoe UI", ds * 0.6f, FontStyle.Bold, GraphicsUnit.Pixel))
-                Texto(g, SentidoHorario ? "↻" : "↺", f, Color.FromArgb(120, 190, 160), rd);
         }
+
 
         void DibujarMano(Graphics g, int seat, float W, float H, float cw, float ch)
         {
@@ -388,50 +386,70 @@ namespace WindowsFormsApp1
             int n = mano.Count;
             if (n == 0) return;
 
+            bool turnoActivo = seat == Partida.getTurnoActual();
+            float elevacion = 22f;
+
             for (int i = 0; i < n; i++)
             {
+                Carta carta = mano[i];
+
+                bool jugable = turnoActivo && !MostrarSelectorColor && Partida.sePuedeJugar(carta);
+
+                bool hov = turnoActivo && !MostrarSelectorColor && hoverI == i;
+
                 RectangleF bounds;
                 float ang = 0;
-                PointF off = new PointF(0, 0);
-                bool hov = (seat == 0 && !MostrarSelectorColor && hoverI == i);
 
                 if (seat == 0)
                 {
                     float step = n > 1 ? Math.Min(cw * 0.8f, (W * 0.6f - cw) / (n - 1)) : 0;
+
                     float total = cw + step * (n - 1);
                     float x0 = (W - total) / 2;
-                    bounds = new RectangleF(x0 + i * step, H - ch - 26, cw, ch);
-                    if (hov) off = new PointF(0, -22);
+
+                    bounds = new RectangleF( x0 + i * step, H - ch - 26, cw, ch );
+
+                    if (jugable)
+                        bounds.Y -= elevacion;
+
+                    if (hov)
+                        bounds.Y -= 12f;
                 }
                 else
                 {
                     float step = n > 1 ? Math.Min(cw * 0.5f, (H * 0.55f - cw) / (n - 1)) : 0;
+
                     float total = cw + step * (n - 1);
                     float y0 = H * 0.5f - total / 2 + 30;
+
                     float cx = seat == 1 ? 16 + ch / 2 : W - 16 - ch / 2;
+
                     float cy = y0 + cw / 2 + i * step;
-                    bounds = new RectangleF(cx - ch / 2, cy - cw / 2, ch, cw);
+
+                    bounds = new RectangleF( cx - ch / 2, cy - cw / 2, ch, cw);
+
                     ang = seat == 1 ? 90 : -90;
+
+                    if (jugable)
+                    {
+                        if (seat == 1)
+                            bounds.X += elevacion;
+                        else
+                            bounds.X -= elevacion;
+                    }
+                    if (hov)
+                    {
+                        if (seat == 1)
+                            bounds.X += 12f;
+                        else
+                            bounds.X -= 12f;
+                    }
                 }
-
-                var dib = new RectangleF(bounds.X + off.X, bounds.Y + off.Y, bounds.Width, bounds.Height);
-                Carta carta = mano[i];
-                bool visible = true; 
-                Rotar(g, dib, ang, r =>
-                {
-                    if (visible) DibujarCara(g, r, carta);
-                    else DibujarReverso(g, r);
-                });
-
-                if (seat == 0) 
+                Rotar(g, bounds, ang, r => { DibujarCara(g, r, carta); });
+                if (turnoActivo && !MostrarSelectorColor)
                 {
                     int ii = i;
-                    zonas.Add(new Zona
-                    {
-                        R = bounds,
-                        Indice = ii,
-                        Accion = () => { if (CartaClick != null) CartaClick(carta); }
-                    });
+                    zonas.Add(new Zona { R = bounds, Indice = ii, Accion = () => { if (CartaClick != null) CartaClick(carta); } });
                 }
             }
         }
@@ -452,7 +470,7 @@ namespace WindowsFormsApp1
                 {
                     Jugador jug = JugadorEnAsiento(seat);
                     int idx = IndiceEnAsiento(seat);
-                    bool activo = seat == 0;
+                    bool activo = idx == Partida.getTurnoActual();
                     Capsula(g, rs[seat], activo ? Mantequilla : Color.FromArgb(215, 255, 255, 255),
                             activo ? Coral : RosaFuerte, activo ? 4 : 2);
                     var top = new RectangleF(rs[seat].X, rs[seat].Y + 2, rs[seat].Width, rs[seat].Height * 0.52f);
@@ -501,12 +519,98 @@ namespace WindowsFormsApp1
             using (var f = new Font("Segoe UI", Math.Max(14f, H * 0.03f), FontStyle.Bold, GraphicsUnit.Pixel))
             {
                 SizeF sz = g.MeasureString(Mensaje, f);
-                var r = new RectangleF(W / 2 - sz.Width / 2 - 24, H * 0.45f + H * 0.25f - 6, sz.Width + 48, sz.Height + 16);
+                float x = 20f;
+                float y = H * 0.14f;
+                var r = new RectangleF(W / 2 - sz.Width / 2 - 24, H * 0.14f, sz.Width + 48, sz.Height + 16);
+                //var r = new RectangleF(x, y, sz.Width + 48, sz.Height + 16);
                 Capsula(g, r, Color.FromArgb(245, 255, 255, 255), RosaFuerte, 3);
                 Texto(g, Mensaje, f, Cafe, r);
             }
         }
+        void DibujarIndicadorDireccion(Graphics g, RectangleF mesa, bool horario)
+        {
+            RectangleF r = RectangleF.Inflate(mesa, -40f, -25f);
 
+            using (var pen = new Pen(Coral, 16f))
+            {
+                pen.StartCap = LineCap.Round;
+                pen.EndCap = LineCap.Round;
+
+                if (horario)
+                {
+                    DibujarArcoConFlecha(g, pen, r, 205f, 95f);
+                    DibujarArcoConFlecha(g, pen, r, 25f, 95f);
+                }
+                else
+                {
+                    DibujarArcoConFlecha(g, pen, r, 300f, -95f);
+                    DibujarArcoConFlecha(g, pen, r, 120f, -95f);
+                }
+            }
+        }
+
+        void DibujarArcoConFlecha(Graphics g, Pen pen, RectangleF r, float startAngle, float sweepAngle)
+        {
+            g.DrawArc(pen, r, startAngle, sweepAngle);
+
+            float endAngle = startAngle + sweepAngle;
+            PointF punta = PuntoEnElipse(r, endAngle);
+
+            PointF tangente = TangenteEnElipse(r, endAngle, sweepAngle);
+            float len = (float)Math.Sqrt(tangente.X * tangente.X + tangente.Y * tangente.Y);
+            if (len == 0) return;
+
+            tangente = new PointF(tangente.X / len, tangente.Y / len);
+
+            PointF atras = new PointF(-tangente.X, -tangente.Y);
+            PointF normal = new PointF(-tangente.Y, tangente.X);
+
+            float tam = 30f;
+
+            PointF p1 = new PointF(
+                punta.X + atras.X * tam + normal.X * (tam * 0.65f),
+                punta.Y + atras.Y * tam + normal.Y * (tam * 0.65f)
+            );
+
+            PointF p2 = new PointF(
+                punta.X + atras.X * tam - normal.X * (tam * 0.65f),
+                punta.Y + atras.Y * tam - normal.Y * (tam * 0.65f)
+            );
+
+            using (var b = new SolidBrush(Coral))
+            {
+                g.FillPolygon(b, new[] { punta, p1, p2 });
+            }
+        }
+
+        PointF PuntoEnElipse(RectangleF r, float anguloGrados)
+        {
+            double a = r.Width / 2.0;
+            double b = r.Height / 2.0;
+            double cx = r.X + a;
+            double cy = r.Y + b;
+            double t = anguloGrados * Math.PI / 180.0;
+
+            return new PointF(
+                (float)(cx + a * Math.Cos(t)),
+                (float)(cy + b * Math.Sin(t))
+            );
+        }
+        PointF TangenteEnElipse(RectangleF r, float anguloGrados, float sweepAngle)
+        {
+            double a = r.Width / 2.0;
+            double b = r.Height / 2.0;
+            double t = anguloGrados * Math.PI / 180.0;
+            float dx = (float)(-a * Math.Sin(t));
+            float dy = (float)(b * Math.Cos(t));
+            if (sweepAngle < 0)
+            {
+                dx = -dx;
+                dy = -dy;
+            }
+
+            return new PointF(dx, dy);
+        }
         void DibujarBotones(Graphics g, float W, float H)
         {
             float bs = Math.Max(40f, H * 0.065f);
@@ -519,14 +623,19 @@ namespace WindowsFormsApp1
                   Color.White, bs * 0.55f, Silencio); */
 
             float us = Math.Max(80f, H * 0.14f);
-            Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), Coral, "UNO!",
-                  () => { if (UnoClick != null) UnoClick(); }, Color.White, us * 0.26f, false);
+            bool unoDisponible = Partida != null && Partida.getJugadorActual().getCartas().Count == 2;
+            Color colorBoton = unoDisponible ? Coral : Color.FromArgb(175, 175, 175);
+            Color colorTexto = unoDisponible ? Color.White : Color.FromArgb(225, 225, 225);
+            Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), colorBoton, "UNO!", unoDisponible ? (Action)(() => { if (UnoClick != null) UnoClick(); }) : null, colorTexto, us * 0.26f, false);
+            /*float ps = Math.Max(65f, H * 0.10f);
+            Color colorPasar = PasarDisponible ? Lavanda : Color.FromArgb(175, 175, 175);
+            Boton(g, new RectangleF( W - ps - 20, H - us - ps - 40, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false); */
         }
 
         void Boton(Graphics g, RectangleF r, Color fill, string txt, Action accion,
                    Color colTxt, float fs, bool tachado)
         {
-            bool h = r.Contains(mouse);
+            bool h = accion != null && r.Contains(mouse);
             RectangleF rr = h ? RectangleF.Inflate(r, 3, 3) : r;
 
             using (var b = new SolidBrush(Color.FromArgb(50, Cafe)))
@@ -539,8 +648,8 @@ namespace WindowsFormsApp1
                 using (var p = new Pen(Color.White, 4) { StartCap = LineCap.Round, EndCap = LineCap.Round })
                     g.DrawLine(p, rr.X + rr.Width * 0.22f, rr.Y + rr.Height * 0.2f,
                                   rr.Right - rr.Width * 0.22f, rr.Bottom - rr.Height * 0.2f);
-
-            zonas.Add(new Zona { R = r, Accion = accion });
+            if(accion != null)
+                zonas.Add(new Zona { R = r, Accion = accion });
         }
 
         void Rotar(Graphics g, RectangleF bounds, float ang, Action<RectangleF> dibuja)
@@ -732,6 +841,7 @@ namespace WindowsFormsApp1
             mesa.RobarClick += AlRobar;
             mesa.UnoClick += AlPresionarUno;
             mesa.ColorElegido += AlElegirColor;
+            mesa.PasarClick += AlPasar;
 
             NuevaPartida();
         }
@@ -746,6 +856,8 @@ namespace WindowsFormsApp1
             mesa.Partida = partida;
             mesa.SentidoHorario = true;
             mesa.MostrarSelectorColor = false;
+            cartaRobadaPendiente = null;
+            mesa.PasarDisponible = false;
             mesa.Invalidate();
         }
 
@@ -767,6 +879,7 @@ namespace WindowsFormsApp1
             Jugador quienJuega = partida.getJugadorActual();
             partida.jugarCarta(carta);
             cartaRobadaPendiente = null;
+            mesa.PasarDisponible = false;
 
             if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
 
@@ -808,10 +921,13 @@ namespace WindowsFormsApp1
             if (robada == null) return;
             if (partida.sePuedeJugar(robada)) {
                 cartaRobadaPendiente = robada;
+                mesa.PasarDisponible = true;
                 mesa.MostrarMensaje("¡Puedes jugar la carta que robaste!");
             }
             else
             {
+                cartaRobadaPendiente = null;
+                mesa.PasarDisponible = false;
                 partida.siguienteTurno();
                 mesa.MostrarMensaje("No se puede jugar, pasa el turno");
             }
@@ -822,7 +938,7 @@ namespace WindowsFormsApp1
         void AlPresionarUno()
         {
             int cartas = partida.getJugadorActual().getCartas().Count;
-            if (cartas <= 2)
+            if (cartas == 2)
             {
                 unoDeclarado = true;
                 mesa.MostrarMensaje("¡UNO!");
@@ -831,6 +947,19 @@ namespace WindowsFormsApp1
             {
                 mesa.MostrarMensaje("Aún tienes muchas cartas");
             }
+        }
+        void AlPasar()
+        {
+            if (cartaRobadaPendiente == null || mesa.MostrarSelectorColor)
+                return;
+            cartaRobadaPendiente = null;
+            unoDeclarado = false;
+
+            partida.siguienteTurno();
+
+            mesa.PasarDisponible = false;
+            mesa.MostrarMensaje("Turno pasado");
+            mesa.Invalidate();
         }
 
         void TerminarPartida()
