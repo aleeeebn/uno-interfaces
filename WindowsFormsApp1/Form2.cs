@@ -327,7 +327,7 @@ namespace WindowsFormsApp1
                 g.FillEllipse(b, mesa);
             using (var p = new Pen(Color.FromArgb(190, 255, 255, 255), 4) { DashStyle = DashStyle.Dot })
                 g.DrawEllipse(p, mesa);
-
+            DibujarIndicadorDireccion(g, mesa, SentidoHorario);
             string turno = "Turno de " + Partida.getJugadorActual().getNombre();
             using (var f = new Font("Segoe UI", Math.Max(14f, H * 0.032f), FontStyle.Bold, GraphicsUnit.Pixel))
             {
@@ -372,12 +372,6 @@ namespace WindowsFormsApp1
                 g.DrawEllipse(pen, rc);
             using (var f = new Font("Segoe UI", Math.Max(11f, H * 0.02f), FontStyle.Bold, GraphicsUnit.Pixel))
                 Texto(g, "Color", f, Cafe, new RectangleF(rc.X - 10, rc.Bottom + 10, hs + 20, 20));
-            float ds = Math.Max(40f, H * 0.075f);
-            var rd = new RectangleF(mazo.X - ds - 40, cy - ds / 2 - 10, ds, ds);
-            g.FillEllipse(Brushes.White, rd);
-            using (var pen = new Pen(Menta, 4)) g.DrawEllipse(pen, rd);
-            using (var f = new Font("Segoe UI", ds * 0.6f, FontStyle.Bold, GraphicsUnit.Pixel))
-                Texto(g, SentidoHorario ? "↻" : "↺", f, Color.FromArgb(120, 190, 160), rd);
         }
 
         void DibujarMano(Graphics g, int seat, float W, float H, float cw, float ch)
@@ -500,7 +494,90 @@ namespace WindowsFormsApp1
                 Texto(g, Mensaje, f, Cafe, r);
             }
         }
+        void DibujarIndicadorDireccion(Graphics g, RectangleF mesa, bool horario)
+        {
+            RectangleF r = RectangleF.Inflate(mesa, -40f, -25f);
 
+            using (var pen = new Pen(Coral, 16f))
+            {
+                pen.StartCap = LineCap.Round;
+                pen.EndCap = LineCap.Round;
+
+                if (horario)
+                {
+                    DibujarArcoConFlecha(g, pen, r, 205f, 95f);
+                    DibujarArcoConFlecha(g, pen, r, 25f, 95f);
+                }
+                else
+                {
+                    DibujarArcoConFlecha(g, pen, r, 300f, -95f);
+                    DibujarArcoConFlecha(g, pen, r, 120f, -95f);
+                }
+            }
+        }
+
+        void DibujarArcoConFlecha(Graphics g, Pen pen, RectangleF r, float startAngle, float sweepAngle)
+        {
+            g.DrawArc(pen, r, startAngle, sweepAngle);
+
+            float endAngle = startAngle + sweepAngle;
+            PointF punta = PuntoEnElipse(r, endAngle);
+
+            PointF tangente = TangenteEnElipse(r, endAngle, sweepAngle);
+            float len = (float)Math.Sqrt(tangente.X * tangente.X + tangente.Y * tangente.Y);
+            if (len == 0) return;
+
+            tangente = new PointF(tangente.X / len, tangente.Y / len);
+
+            PointF atras = new PointF(-tangente.X, -tangente.Y);
+            PointF normal = new PointF(-tangente.Y, tangente.X);
+
+            float tam = 30f;
+
+            PointF p1 = new PointF(
+                punta.X + atras.X * tam + normal.X * (tam * 0.65f),
+                punta.Y + atras.Y * tam + normal.Y * (tam * 0.65f)
+            );
+
+            PointF p2 = new PointF(
+                punta.X + atras.X * tam - normal.X * (tam * 0.65f),
+                punta.Y + atras.Y * tam - normal.Y * (tam * 0.65f)
+            );
+
+            using (var b = new SolidBrush(Coral))
+            {
+                g.FillPolygon(b, new[] { punta, p1, p2 });
+            }
+        }
+
+        PointF PuntoEnElipse(RectangleF r, float anguloGrados)
+        {
+            double a = r.Width / 2.0;
+            double b = r.Height / 2.0;
+            double cx = r.X + a;
+            double cy = r.Y + b;
+            double t = anguloGrados * Math.PI / 180.0;
+
+            return new PointF(
+                (float)(cx + a * Math.Cos(t)),
+                (float)(cy + b * Math.Sin(t))
+            );
+        }
+        PointF TangenteEnElipse(RectangleF r, float anguloGrados, float sweepAngle)
+        {
+            double a = r.Width / 2.0;
+            double b = r.Height / 2.0;
+            double t = anguloGrados * Math.PI / 180.0;
+            float dx = (float)(-a * Math.Sin(t));
+            float dy = (float)(b * Math.Cos(t));
+            if (sweepAngle < 0)
+            {
+                dx = -dx;
+                dy = -dy;
+            }
+
+            return new PointF(dx, dy);
+        }
         void DibujarBotones(Graphics g, float W, float H)
         {
             float bs = Math.Max(40f, H * 0.065f);
@@ -607,6 +684,73 @@ namespace WindowsFormsApp1
             {
                 g.DrawImage(img, r);
                 return;
+            }
+        }
+        void DibujarRuedaTurno(Graphics g, float cx, float cy, float radioExterior, float radioInterior)
+        {
+            RectangleF outer = new RectangleF(cx - radioExterior,cy - radioExterior, radioExterior * 2, radioExterior * 2);
+            Color[] colores = { Color.FromArgb(255, 235, 70, 70), Color.FromArgb(255, 245, 220, 60), Color.FromArgb(255, 70, 205, 110), Color.FromArgb(255, 70, 170, 235)};
+            using (var sb = new SolidBrush(Color.FromArgb(45, 0, 0, 0)))
+            {
+                g.FillEllipse(sb, outer.X + 5, outer.Y + 8, outer.Width, outer.Height);
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                using (var b = new SolidBrush(colores[i]))
+                {
+                    g.FillPie(b, outer.X, outer.Y, outer.Width, outer.Height, i * 90f, 90f);
+                }
+            }
+            using (var pen = new Pen(Color.FromArgb(220, 255, 255, 255), 4))
+            {
+                g.DrawEllipse(pen, outer);
+            }
+            RectangleF inner = new RectangleF(cx - radioInterior, cy - radioInterior, radioInterior * 2, radioInterior * 2);
+            using (var b = new SolidBrush(Color.FromArgb(230, 255, 250, 245)))
+            {
+                g.FillEllipse(b, inner);
+            }
+            using (var pen = new Pen(Color.FromArgb(180, 255, 255, 255), 3))
+            {
+                g.DrawEllipse(pen, inner);
+            }
+            DibujarFlechaCircular(g, cx, cy, (radioExterior + radioInterior) / 2f, SentidoHorario);
+        }
+        void DibujarFlechaCircular(Graphics g, float cx, float cy, float radio, bool horario)
+        {
+            float grosor = Math.Max(8f, radio * 0.12f);
+            float startAngle = horario ? 220f : -40f;
+            float sweepAngle = horario ? 240f : -240f;
+
+            RectangleF arco = new RectangleF(cx - radio, cy - radio, radio * 2, radio * 2);
+            using (var pen = new Pen(Color.White, grosor))
+            {
+                pen.StartCap = LineCap.Round;
+                pen.EndCap = LineCap.Round;
+                g.DrawArc(pen, arco, startAngle, sweepAngle);
+            }
+            float endAngle = startAngle + sweepAngle;
+            double rad = Math.PI * endAngle / 180.0;
+
+            float px = cx + (float)Math.Cos(rad) * radio;
+            float py = cy + (float)Math.Sin(rad) * radio;
+            double tang = horario ? rad + Math.PI / 2.0 : rad - Math.PI / 2.0;
+
+            float tam = Math.Max(14f, radio * 0.18f);
+
+            PointF punta = new PointF(px, py);
+            PointF p1 = new PointF(
+                px - (float)Math.Cos(tang) * tam - (float)Math.Cos(rad) * tam * 0.45f,
+                py - (float)Math.Sin(tang) * tam - (float)Math.Sin(rad) * tam * 0.45f
+            );
+            PointF p2 = new PointF(
+                px + (float)Math.Cos(tang) * tam - (float)Math.Cos(rad) * tam * 0.45f,
+                py + (float)Math.Sin(tang) * tam - (float)Math.Sin(rad) * tam * 0.45f
+            );
+
+            using (var b = new SolidBrush(Color.White))
+            {
+                g.FillPolygon(b, new[] { punta, p1, p2 });
             }
         }
         public static Color ColorDe(string c)
