@@ -260,14 +260,12 @@ namespace WindowsFormsApp1
 
         Jugador JugadorEnAsiento(int seat)
         {
-            int n = Partida.getJugadores().Count;
-            return Partida.getJugador((Partida.getTurnoActual() + seat) % n);
+            return Partida.getJugador(seat);
         }
 
         int IndiceEnAsiento(int seat)
         {
-            int n = Partida.getJugadores().Count;
-            return (Partida.getTurnoActual() + seat) % n;
+            return seat;
         }
 
         void DibujarFondo(Graphics g, float W, float H)
@@ -393,7 +391,8 @@ namespace WindowsFormsApp1
                 RectangleF bounds;
                 float ang = 0;
                 PointF off = new PointF(0, 0);
-                bool hov = (seat == 0 && !MostrarSelectorColor && hoverI == i);
+                bool activo = seat == Partida.getTurnoActual();
+                bool hov = activo && !MostrarSelectorColor && hoverI == i;
 
                 if (seat == 0)
                 {
@@ -423,15 +422,10 @@ namespace WindowsFormsApp1
                     else DibujarReverso(g, r);
                 });
 
-                if (seat == 0) 
+                if (activo && !MostrarSelectorColor) 
                 {
                     int ii = i;
-                    zonas.Add(new Zona
-                    {
-                        R = bounds,
-                        Indice = ii,
-                        Accion = () => { if (CartaClick != null) CartaClick(carta); }
-                    });
+                    zonas.Add(new Zona{R = bounds, Indice = ii, Accion = () => { if (CartaClick != null) CartaClick(carta); } });
                 }
             }
         }
@@ -452,7 +446,7 @@ namespace WindowsFormsApp1
                 {
                     Jugador jug = JugadorEnAsiento(seat);
                     int idx = IndiceEnAsiento(seat);
-                    bool activo = seat == 0;
+                    bool activo = idx == Partida.getTurnoActual();
                     Capsula(g, rs[seat], activo ? Mantequilla : Color.FromArgb(215, 255, 255, 255),
                             activo ? Coral : RosaFuerte, activo ? 4 : 2);
                     var top = new RectangleF(rs[seat].X, rs[seat].Y + 2, rs[seat].Width, rs[seat].Height * 0.52f);
