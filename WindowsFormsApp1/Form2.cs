@@ -514,7 +514,10 @@ namespace WindowsFormsApp1
             using (var f = new Font("Segoe UI", Math.Max(14f, H * 0.03f), FontStyle.Bold, GraphicsUnit.Pixel))
             {
                 SizeF sz = g.MeasureString(Mensaje, f);
-                var r = new RectangleF(W / 2 - sz.Width / 2 - 24, H * 0.45f + H * 0.25f - 6, sz.Width + 48, sz.Height + 16);
+                float x = 20f;
+                float y = H * 0.14f;
+                var r = new RectangleF(W / 2 - sz.Width / 2 - 24, H * 0.14f, sz.Width + 48, sz.Height + 16);
+                //var r = new RectangleF(x, y, sz.Width + 48, sz.Height + 16);
                 Capsula(g, r, Color.FromArgb(245, 255, 255, 255), RosaFuerte, 3);
                 Texto(g, Mensaje, f, Cafe, r);
             }
