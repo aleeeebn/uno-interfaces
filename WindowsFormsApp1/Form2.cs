@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsApp1
@@ -843,25 +844,36 @@ namespace WindowsFormsApp1
             return idsJugadores[partida.getJugadores().IndexOf(j)];
         }
 
-        async void LogMov(Jugador j, string accion, string color = null, int? valor = null)
+        Task colaApi = Task.CompletedTask;
+
+        async Task Encolar(Task anterior, Func<Task> envio)
         {
-            if (idPartida == 0) return;
-            try { await ApiCliente.RegistrarMovimiento(idPartida, IdDe(j), accion, color, valor); }
-            catch { }
+            try { await anterior; } catch { }
+            try { await envio(); } catch { }
         }
 
-        async void LogJugada(Jugador j, Carta c)
-        {
-            if(idPartida == 0) return;
-            try { await ApiCliente.RegistrarJugada(idPartida, IdDe(j), c); }
-            catch { }
-        }
-
-        async void TerminarPartidaBD(Jugador ganador)
+        void LogMov(Jugador j, string accion, string color = null, int? valor = null)
         {
             if (idPartida == 0) return;
-            try { await ApiCliente.TerminarPartida(idPartida, IdDe(ganador)); }
-            catch { }
+            int partidaId = idPartida;
+            int jugadorId = IdDe(j);
+            colaApi = Encolar(colaApi, () => ApiCliente.RegistrarMovimiento(partidaId, jugadorId, accion, color, valor));
+        }
+
+        void LogJugada(Jugador j, Carta c)
+        {
+            if (idPartida == 0) return;
+            int partidaId = idPartida;
+            int jugadorId = IdDe(j);
+            colaApi = Encolar(colaApi, () => ApiCliente.RegistrarJugada(partidaId, jugadorId, c));
+        }
+
+        void TerminarPartidaBD(Jugador ganador)
+        {
+            if (idPartida == 0) return;
+            int partidaId = idPartida;
+            int ganadorId = IdDe(ganador);
+            colaApi = Encolar(colaApi, () => ApiCliente.TerminarPartida(partidaId, ganadorId));
         }
 
         public Form2()
@@ -900,6 +912,7 @@ namespace WindowsFormsApp1
             mesa.MostrarSelectorColor = false;
             cartaRobadaPendiente = null;
             mesa.PasarDisponible = false;
+            IniciarPartidaBD();
             mesa.Invalidate();
         }
 
@@ -919,6 +932,7 @@ namespace WindowsFormsApp1
             }
 
             Jugador quienJuega = partida.getJugadorActual();
+            LogJugada(quienJuega, carta);
             partida.jugarCarta(carta);
             cartaRobadaPendiente = null;
             mesa.PasarDisponible = false;
@@ -933,6 +947,7 @@ namespace WindowsFormsApp1
 
             if (quienJuega.uno() && !unoDeclarado)
             {
+                LogMov(quienJuega, "penalizacion_uno");
                 partida.robarCartas(quienJuega, 2);
                 mesa.MostrarMensaje(quienJuega.getNombre() + " olvidó decir UNO: +2 cartas");
             }
@@ -947,6 +962,7 @@ namespace WindowsFormsApp1
         void AlElegirColor(string color)
         {
             mesa.MostrarSelectorColor = false;
+            LogMov(partida.getJugadorActual(), "elegir_color", color);
             partida.elegirColor(color);
             mesa.Invalidate();
         }
@@ -959,8 +975,10 @@ namespace WindowsFormsApp1
                 mesa.MostrarMensaje("Ya robaste una carta");
                 return;
             }
+            Jugador quien = partida.getJugadorActual();
             Carta robada = partida.robarCarta();
             if (robada == null) return;
+            LogMov(quien, "robar_carta");
             if (partida.sePuedeJugar(robada)) {
                 cartaRobadaPendiente = robada;
                 mesa.PasarDisponible = true;
@@ -970,6 +988,7 @@ namespace WindowsFormsApp1
             {
                 cartaRobadaPendiente = null;
                 mesa.PasarDisponible = false;
+                LogMov(quien, "pasar_turno");
                 partida.siguienteTurno();
                 mesa.MostrarMensaje("No se puede jugar, pasa el turno");
             }
@@ -983,6 +1002,7 @@ namespace WindowsFormsApp1
             if (cartas == 2)
             {
                 unoDeclarado = true;
+                LogMov(partida.getJugadorActual(), "decir_uno");
                 mesa.MostrarMensaje("¡UNO!");
             }
             else
@@ -997,6 +1017,7 @@ namespace WindowsFormsApp1
             cartaRobadaPendiente = null;
             unoDeclarado = false;
 
+            LogMov(partida.getJugadorActual(), "pasar_turno");
             partida.siguienteTurno();
 
             mesa.PasarDisponible = false;
@@ -1007,6 +1028,7 @@ namespace WindowsFormsApp1
         void TerminarPartida()
         {
             Jugador ganador = partida.getGanador();
+            TerminarPartidaBD(ganador);
             int idx = partida.getJugadores().IndexOf(ganador);
             if (idx >= 0) mesa.Puntos[idx]++;
             mesa.Invalidate();
