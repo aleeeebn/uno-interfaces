@@ -822,6 +822,48 @@ namespace WindowsFormsApp1
         bool unoDeclarado = false;
         Carta cartaRobadaPendiente = null;
 
+        int idPartida = 0;
+        List<int> idsJugadores = new List<int>();
+
+        async void IniciarPartidaBD()
+        {
+            idPartida = 0;
+            try
+            {
+                idsJugadores.Clear();
+                foreach (Jugador j in partida.getJugadores())
+                    idsJugadores.Add(await ApiCliente.CrearJugador(j.getNombre()));
+                idPartida = await ApiCliente.CrearPartida(idsJugadores[0], idsJugadores[1], idsJugadores[2]);
+            }
+            catch { idPartida = 0; }
+        }
+
+        int IdDe(Jugador j)
+        {
+            return idsJugadores[partida.getJugadores().IndexOf(j)];
+        }
+
+        async void LogMov(Jugador j, string accion, string color = null, int? valor = null)
+        {
+            if (idPartida == 0) return;
+            try { await ApiCliente.RegistrarMovimiento(idPartida, IdDe(j), accion, color, valor); }
+            catch { }
+        }
+
+        async void LogJugada(Jugador j, Carta c)
+        {
+            if(idPartida == 0) return;
+            try { await ApiCliente.RegistrarJugada(idPartida, IdDe(j), c); }
+            catch { }
+        }
+
+        async void TerminarPartidaBD(Jugador ganador)
+        {
+            if (idPartida == 0) return;
+            try { await ApiCliente.TerminarPartida(idPartida, IdDe(ganador)); }
+            catch { }
+        }
+
         public Form2()
         {
             InitializeComponent();
