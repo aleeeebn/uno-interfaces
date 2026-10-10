@@ -71,7 +71,6 @@ namespace WindowsFormsApp1
 
         void AbrirHistorial()
         {
-            // TODO: conectar con la base de datos (historial de partidas) y abrir tu formulario de historial
             MessageBox.Show("Aquí irá el historial de partidas.", "Historial");
         }
 
