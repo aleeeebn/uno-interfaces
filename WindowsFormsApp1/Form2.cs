@@ -744,6 +744,10 @@ namespace WindowsFormsApp1
             /*float ps = Math.Max(65f, H * 0.10f);
             Color colorPasar = PasarDisponible ? Lavanda : Color.FromArgb(175, 175, 175);
             Boton(g, new RectangleF( W - ps - 20, H - us - ps - 40, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false); */
+            if (AcusarUnoDisponible)
+            {
+                Boton(g, new RectangleF(W / 2 - 55, 110, 110, 55), RosaFuerte, "Acusar UNO", () => AcusarUnoClick?.Invoke(), Color.White, 14f, false);
+            }
         }
 
         void Boton(Graphics g, RectangleF r, Color fill, string txt, Action accion,
@@ -958,6 +962,7 @@ namespace WindowsFormsApp1
             mesa.ColorElegido += AlElegirColor;
             mesa.PasarClick += AlPasar;
             mesa.VolverAJugarClick += NuevaPartida;
+            mesa.AcusarUnoClick += AlAcusarUno;
             mesa.IrMenuClick += () =>
             {
                 mesa.MostrarVictoria = false;
@@ -1057,6 +1062,7 @@ namespace WindowsFormsApp1
                 mesa.PasarDisponible = false;
                 partida.siguienteTurno();
                 mesa.MostrarMensaje("No se puede jugar, pasa el turno");
+                CerrarOportunidadUno();
             }
             unoDeclarado = false;
             mesa.Invalidate();
@@ -1083,6 +1089,7 @@ namespace WindowsFormsApp1
             unoDeclarado = false;
 
             partida.siguienteTurno();
+            CerrarOportunidadUno();
 
             mesa.PasarDisponible = false;
             mesa.MostrarMensaje("Turno pasado");
@@ -1101,6 +1108,22 @@ namespace WindowsFormsApp1
             mesa.MostrarMenu = false;
 
             mesa.Invalidate();
+        }
+
+        void AlAcusarUno()
+        {
+            if (jugadorSinUno == null) return;
+            Jugador infractor = jugadorSinUno;
+            partida.robarCartas(infractor, 2);
+            jugadorSinUno = null;
+            mesa.AcusarUnoDisponible = false;
+            mesa.MostrarMensaje(infractor.getNombre() + " no dijo UNO (+2 cartas)");
+            mesa.Invalidate();
+        }
+        void CerrarOportunidadUno()
+        {
+            jugadorSinUno = null;
+            mesa.AcusarUnoDisponible = false;
         }
     }
 }
