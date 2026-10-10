@@ -12,7 +12,7 @@ namespace WindowsFormsApp1
         private List<Carta> cartas;
         public Jugador(string nombre)
         {
-            this.nombre = nombre;
+            this.nombre = nombre; //2
             cartas = new List<Carta>();
         }
         public List<Carta> getCartas()
