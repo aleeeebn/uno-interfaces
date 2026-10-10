@@ -6,7 +6,7 @@ using System.Windows.Forms;
 namespace WindowsFormsApp1
 { 
 
-    public class menu : Form
+    public class Menu : Form
     {
         static readonly Color RosaFondo1 = Color.FromArgb(255, 244, 244);
         static readonly Color RosaFondo2 = Color.FromArgb(255, 214, 226);
@@ -17,7 +17,9 @@ namespace WindowsFormsApp1
         static readonly Color Texto = Color.FromArgb(125, 65, 95);
 
         BotonPastel btnJugar, btnHistorial, btnReglas, btnSalir;
-        public menu()
+        Panel panelNombres;
+        TextBox[] nombres = new TextBox[3];
+        public Menu()
         {
             Text = "UNO";
             ClientSize = new Size(1100, 740);
@@ -30,7 +32,7 @@ namespace WindowsFormsApp1
             btnReglas = CrearBoton("Reglas", Verde);
             btnSalir = CrearBoton("Salir", Lila);
 
-            btnJugar.Click += (s, e) => AbrirJuego();
+            btnJugar.Click += (s, e) => MostrarPantallaNombres();
             btnHistorial.Click += (s, e) => AbrirHistorial();
             btnReglas.Click += (s, e) => MostrarReglas();
             btnSalir.Click += (s, e) => Close();
@@ -47,8 +49,95 @@ namespace WindowsFormsApp1
         {
             return new BotonPastel { Text = texto, ColorBase = color, ColorTexto = Texto, Size = new Size(320, 78) };
         }
+        void MostrarPantallaNombres()
+        {
+            btnJugar.Visible = false;
+            btnHistorial.Visible = false;
+            btnReglas.Visible = false;
+            btnSalir.Visible = false;
 
-        
+            panelNombres = new Panel{Size = new Size(440, 440),BackColor = Color.FromArgb(255, 250, 245)};
+            Label lblError = new Label{Text = "",ForeColor = Color.FromArgb(210, 75, 110),Font = new Font("Segoe UI", 10, FontStyle.Bold),TextAlign = ContentAlignment.MiddleCenter,Location = new Point(30, 326),Size = new Size(380, 25)};
+
+            panelNombres.Controls.Add(lblError);
+
+            var titulo = new Label{Text = "Nombres de los jugadores",Font = new Font("Segoe UI", 20, FontStyle.Bold),ForeColor = Texto,TextAlign = ContentAlignment.MiddleCenter,Location = new Point(20, 20),Size = new Size(400, 55)};
+
+            panelNombres.Controls.Add(titulo);
+
+            for (int i = 0; i < 3; i++)
+            {
+                var etiqueta = new Label{Text = "Jugador " + (i + 1),ForeColor = Texto,Font = new Font("Segoe UI", 12, FontStyle.Bold),Location = new Point(55, 85 + i * 80),Size = new Size(320, 25)};
+
+                nombres[i] = new TextBox{Text = "",Font = new Font("Segoe UI", 14),ForeColor = Texto, BackColor = Color.FromArgb(255, 240, 245), BorderStyle = BorderStyle.FixedSingle, TextAlign = HorizontalAlignment.Center,Location = new Point(55, 112 + i * 80),Size = new Size(330, 36),MaxLength = 20};
+                
+                nombres[i].Enter += (s, e) =>
+                {
+                    ((TextBox)s).BackColor =
+                        Color.FromArgb(255, 225, 235);
+                };
+
+                nombres[i].Leave += (s, e) =>
+                {
+                    ((TextBox)s).BackColor =
+                        Color.FromArgb(255, 240, 245);
+                };
+
+                panelNombres.Controls.Add(etiqueta);
+                panelNombres.Controls.Add(nombres[i]);
+            }
+
+            var comenzar = new BotonPastel{Text = "Comenzar",ColorBase = Rosa,ColorTexto = Texto,Size = new Size(180, 65),Location = new Point(35, 355)};
+
+            var volver = new BotonPastel{Text = "Volver",ColorBase = Lila,ColorTexto = Texto,Size = new Size(180, 65),Location = new Point(225, 355)};
+
+
+            comenzar.Click += (s, e) =>
+            {
+                string[] jugadores = new string[3];
+                lblError.Text = "";
+                for (int i = 0; i < 3; i++)
+                {
+                    jugadores[i] = nombres[i].Text.Trim();
+                    if (string.IsNullOrWhiteSpace(jugadores[i]))
+                        jugadores[i] = "Jugador " + (i + 1);
+                }
+                for (int i = 0; i < jugadores.Length; i++)
+                {
+                    for (int j = i + 1; j < jugadores.Length; j++)
+                    {
+                        if (string.Equals(
+                            jugadores[i],
+                            jugadores[j],
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            lblError.Text = "Los nombres no pueden repetirse";
+                            nombres[j].Focus();
+                            nombres[j].SelectAll();
+                            return;
+                        }
+                    }
+                }
+                AbrirJuego(jugadores);
+            };
+
+
+            volver.Click += (s, e) =>
+            {
+                Controls.Remove(panelNombres);
+                panelNombres.Dispose();
+                panelNombres = null;
+                btnJugar.Visible = true;
+                btnHistorial.Visible = true;
+                btnReglas.Visible = true;
+                btnSalir.Visible = true;
+            };
+            panelNombres.Controls.Add(comenzar);
+            panelNombres.Controls.Add(volver);
+            Controls.Add(panelNombres);
+            panelNombres.Location = new Point((ClientSize.Width - panelNombres.Width) / 2, (ClientSize.Height - panelNombres.Height) / 2);
+            panelNombres.BringToFront();
+        }
         void Acomodar()
         {
             int x = (ClientSize.Width - 320) / 2;
@@ -58,12 +147,29 @@ namespace WindowsFormsApp1
                 b.Location = new Point(x, y);
                 y += 98;
             }
+            if (panelNombres != null)
+            {
+                panelNombres.Location = new Point((ClientSize.Width - panelNombres.Width) / 2,(ClientSize.Height - panelNombres.Height) / 2);
+            }
         }
 
-        void AbrirJuego()
+        void AbrirJuego(string[] jugadores)
         {
-            var juego = new Form2();             
-            juego.FormClosed += (s, e) => Show(); 
+            var juego = new Form2(jugadores);
+            juego.FormClosed += (s, e) =>
+            {
+                if (panelNombres != null)
+                {
+                    Controls.Remove(panelNombres);
+                    panelNombres.Dispose();
+                    panelNombres = null;
+                }
+                btnJugar.Visible = true;
+                btnHistorial.Visible = true;
+                btnReglas.Visible = true;
+                btnSalir.Visible = true;
+                Show();
+            };
             Hide();
             juego.Show();
         }
