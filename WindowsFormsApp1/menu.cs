@@ -42,12 +42,14 @@ namespace WindowsFormsApp1
             Acomodar();
         }
 
+        
+
         BotonPastel CrearBoton(string texto, Color color)
         {
             return new BotonPastel { Text = texto, ColorBase = color, ColorTexto = Texto, Size = new Size(320, 78) };
         }
 
-        // Centra los botones debajo del título
+        
         void Acomodar()
         {
             int x = (ClientSize.Width - 320) / 2;
@@ -59,11 +61,10 @@ namespace WindowsFormsApp1
             }
         }
 
-        // ---------- Acciones ----------
         void AbrirJuego()
         {
-            var juego = new Form2();             // tu interfaz final del juego
-            juego.FormClosed += (s, e) => Show(); // al cerrar el juego, regresa el menú
+            var juego = new Form2();             
+            juego.FormClosed += (s, e) => Show(); 
             Hide();
             juego.Show();
         }
