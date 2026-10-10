@@ -948,10 +948,38 @@ namespace WindowsFormsApp1
         bool unoDeclarado = false;
         Carta cartaRobadaPendiente = null;
         Jugador jugadorSinUno = null;
-
+        string[] nombresJugadores;
         int idPartida = 0;
         List<int> idsJugadores = new List<int>();
+        public Form2(string[] nombres)
+        {
+            nombresJugadores = (string[])nombres.Clone();
+            InitializeComponent();
 
+            Text = "UNO";
+            ClientSize = new Size(1100, 720);
+            MinimumSize = new Size(900, 620);
+            StartPosition = FormStartPosition.CenterScreen;
+            BackColor = Color.FromArgb(255, 230, 225);
+            DoubleBuffered = true;
+
+            mesa = new Tablero { Dock = DockStyle.Fill };
+            Controls.Add(mesa);
+
+            mesa.SalirClick += () => Close();
+            mesa.CartaClick += AlHacerClicEnCarta;
+            mesa.RobarClick += AlRobar;
+            mesa.UnoClick += AlPresionarUno;
+            mesa.ColorElegido += AlElegirColor;
+            mesa.PasarClick += AlPasar;
+            mesa.VolverAJugarClick += NuevaPartida;
+            mesa.AcusarUnoClick += AlAcusarUno;
+            mesa.IrMenuClick += () =>
+            {
+                Close();
+            };
+            NuevaPartida();
+        }
         async void IniciarPartidaBD()
         {
             idPartida = 0;
@@ -1002,40 +1030,12 @@ namespace WindowsFormsApp1
             colaApi = Encolar(colaApi, () => ApiCliente.TerminarPartida(partidaId, ganadorId));
         }
 
-        public Form2()
-        {
-            InitializeComponent();
-
-            Text = "UNO";
-            ClientSize = new Size(1100, 720);
-            MinimumSize = new Size(900, 620);
-            StartPosition = FormStartPosition.CenterScreen;
-            BackColor = Color.FromArgb(255, 230, 225);
-            DoubleBuffered = true;
-
-            mesa = new Tablero { Dock = DockStyle.Fill };
-            Controls.Add(mesa);
-
-            mesa.SalirClick += () => Close();
-            mesa.CartaClick += AlHacerClicEnCarta;
-            mesa.RobarClick += AlRobar;
-            mesa.UnoClick += AlPresionarUno;
-            mesa.ColorElegido += AlElegirColor;
-            mesa.PasarClick += AlPasar;
-            mesa.VolverAJugarClick += NuevaPartida;
-            mesa.AcusarUnoClick += AlAcusarUno;
-            mesa.IrMenuClick += () =>
-            {
-                mesa.MostrarVictoria = false;
-                mesa.MostrarMenu = false;
-                mesa.Invalidate();
-            };
-            NuevaPartida();
-        }
 
         void NuevaPartida()
         {
             partida = new Partida();
+            for (int i = 0; i < 3; i++)
+                partida.getJugador(i).setNombre(nombresJugadores[i]);
             partida.repartir();
             partida.iniciaDescarte();
             unoDeclarado = false;
