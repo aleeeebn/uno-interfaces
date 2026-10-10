@@ -46,5 +46,20 @@ namespace WindowsFormsApp1
                 if (valor != null) url += "&valor_carta=" + valor;
                 await cliente.PostAsync(url, null);
             }
+        public static async Task RegistrarJugada(int idPartida, int idJugador, Carta carta)
+        {
+            string accion;
+            int? valor = null;
+            switch (carta.getValor())
+            {
+                case 10: accion = "jugar_mas2"; break;
+                case 11: accion = "jugar_reversa"; break;
+                case 12: accion = "jugar_salto"; break;
+                case 13: accion = "jugar_comodin"; break;
+                case 14: accion = "jugar_mas4"; break;
+                default: accion = "jugar_carta"; valor = carta.getValor(); break;
+            }
+            await RegistrarMovimiento(idPartida, idJugador, accion, carta.getColor(), valor);
+        }
     }
 }
