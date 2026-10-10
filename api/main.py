@@ -16,6 +16,15 @@ def obtener_conexion():
         cursorclass=pymysql.cursors.DictCursor
     )
 
+@app.get("/jugadores")
+def jugadores():
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute("SELECT id_jugador, nombre FROM jugadores")
+    datos = cursor.fetchall()
+    conexion.close()
+    return datos
+
 @app.post("/jugadores")
 def crear_jugador(nombre: str):
     conexion = obtener_conexion()
