@@ -52,6 +52,7 @@
     <Compile Include="CartasJuego.cs" />
     <Compile Include="Form2.cs" />
     <Compile Include="Form2.Designer.cs">
+	
       <DependentUpon>Form2.cs</DependentUpon>
     </Compile>
     <Compile Include="ImagenesCartas.cs" />
@@ -63,6 +64,7 @@
     </Compile>
     <Compile Include="Jugador.cs" />
     <Compile Include="Mazo.cs" />
+	<Compile Include="menu.cs" />
     <Compile Include="Partida.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
