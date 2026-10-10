@@ -15,3 +15,5 @@ obj/
 .venv/
 __pycache__/
 .env
+
+packages/

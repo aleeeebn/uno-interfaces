@@ -30,6 +30,14 @@ namespace WindowsFormsApp1
             comodinPendiente = 0;
             agregarJugadoresDefault();
         }
+        public Jugador getJugador(int indice)
+        {
+            if (indice >= 0 && indice < jugadores.Count)
+            {
+                return jugadores[indice];
+            }
+            return null;
+        }
         public int getTurnoActual()
         {
             return turnoActual;
@@ -41,10 +49,6 @@ namespace WindowsFormsApp1
         public Jugador getJugadorActual()
         {
             return jugadores[turnoActual];
-        }
-        public Jugador getJugador(int index)
-        {
-            return jugadores[index];
         }
         public List<Jugador> getJugadores()
         {
@@ -120,6 +124,8 @@ namespace WindowsFormsApp1
         }
         public void jugarCarta(Carta carta)
         {
+            if (!getJugadorActual().getCartas().Contains(carta)) return;
+            if (!sePuedeJugar(carta)) return;
             jugadores[turnoActual].removeCarta(carta);
             juego.añadirCartas(carta);
             if (carta.getValor() == 13 || carta.getValor() == 14)
@@ -135,8 +141,15 @@ namespace WindowsFormsApp1
             Carta cartaActual = juego.getUltimaCarta();
             if (cartaActual == null)
                 return true;
-            if (carta.getColor() == "Comodin")
+            if (carta.getValor() == 13)
                 return true;
+            if(carta.getValor() == 14)
+            {
+                Jugador actual = getJugadorActual();
+                foreach(Carta otra in actual.getCartas())
+                    if (otra != carta && otra.getColor() == colorActual) return false;
+                return true;
+            }
             if (carta.getColor() == colorActual)
                 return true;
             if (carta.getValor() == cartaActual.getValor())
@@ -146,25 +159,21 @@ namespace WindowsFormsApp1
         public void iniciaDescarte()
         {
             int i = 0;
-            while(i < mazo.getMazoSize() && mazo.getCarta(i).getValor() > 9)
-            {
-                i++;
-            }
+            while(i < mazo.getMazoSize() && mazo.getCarta(i).getValor() > 9) i++;
             if (i >= mazo.getMazoSize()) return;
             Carta carta = mazo.getCarta(i);
             juego.añadirCartas(carta);
             mazo.removeCarta(i);
             colorActual = carta.getColor();
         }
-        public void robarCarta()
+        public Carta robarCarta()
         {
             siMazoEstaVacio();
-            if (!mazo.estaVacio())
-            {
-                Carta carta = mazo.getCarta(0);
-                jugadores[turnoActual].añadirCarta(carta);
-                mazo.removeCarta(0);
-            }
+            if (mazo.estaVacio()) return null;
+            Carta carta = mazo.getCarta(0);
+            jugadores[turnoActual].añadirCarta(carta);
+            mazo.removeCarta(0);
+            return carta;
         }
         public void robarCartas(Jugador jugador, int cantidad)
         {
@@ -226,7 +235,25 @@ namespace WindowsFormsApp1
         {
             return comodinPendiente == 13 || comodinPendiente == 14;
         }
-
-        
+        public int valorEnPuntos(Carta carta)
+        {
+            int valor = carta.getValor();
+            if (valor <= 9) return valor;
+            if (valor >= 10 && valor <= 12) return 20;
+            return 50;
+        }
+        public int calcularPuntosRonda()
+        {
+            int total = 0;
+            Jugador ganador = getGanador();
+            if (ganador == null) return 0;
+            foreach(Jugador jugador in jugadores)
+            {
+                if (jugador == ganador) continue;
+                foreach (Carta carta in jugador.getCartas())
+                    total += valorEnPuntos(carta);
+            }
+            return total;
+        }
     }
 }
