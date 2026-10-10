@@ -156,7 +156,7 @@ namespace WindowsFormsApp1
         public bool AcusarUnoDisponible = false;
         public int[] Puntuacion = new int[3];
         public string TituloVictoria = "Ganador de la ronda";
-
+        public Carta CartaRobadaPendiente = null;
 
         public event Action AcusarUnoClick;
         public event Action VolverAJugarClick;
@@ -510,7 +510,7 @@ namespace WindowsFormsApp1
             {
                 Carta carta = mano[i];
 
-                bool jugable = turnoActivo && !MostrarSelectorColor && Partida.sePuedeJugar(carta);
+                bool jugable = turnoActivo && !MostrarSelectorColor && Partida.sePuedeJugar(carta) && (CartaRobadaPendiente == null || carta == CartaRobadaPendiente);
 
                 bool hov = turnoActivo && !MostrarSelectorColor && hoverI == i;
 
@@ -1026,7 +1026,9 @@ namespace WindowsFormsApp1
                 TerminarPartida();
                 return;
             }
+            
             cartaRobadaPendiente = null;
+            mesa.CartaRobadaPendiente = cartaRobadaPendiente;
             mesa.PasarDisponible = false;
 
             if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
@@ -1071,12 +1073,14 @@ namespace WindowsFormsApp1
             if (robada == null) return;
             if (partida.sePuedeJugar(robada)) {
                 cartaRobadaPendiente = robada;
+                mesa.CartaRobadaPendiente = cartaRobadaPendiente;
                 mesa.PasarDisponible = true;
                 mesa.MostrarMensaje("¡Puedes jugar la carta que robaste!");
             }
             else
             {
                 cartaRobadaPendiente = null;
+                mesa.CartaRobadaPendiente = cartaRobadaPendiente;
                 mesa.PasarDisponible = false;
                 partida.siguienteTurno();
                 mesa.MostrarMensaje("No se puede jugar, pasa el turno");
@@ -1104,6 +1108,7 @@ namespace WindowsFormsApp1
             if (cartaRobadaPendiente == null || mesa.MostrarSelectorColor)
                 return;
             cartaRobadaPendiente = null;
+            mesa.CartaRobadaPendiente = cartaRobadaPendiente;
             unoDeclarado = false;
 
             partida.siguienteTurno();
