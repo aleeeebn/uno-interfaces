@@ -86,13 +86,12 @@ namespace WindowsFormsApp1
                 "Reglas");
         }
 
-        // ---------- Dibujo ----------
+
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             using (var br = new LinearGradientBrush(ClientRectangle, RosaFondo1, RosaFondo2, 90f))
                 e.Graphics.FillRectangle(br, ClientRectangle);
 
-            // Círculos decorativos suaves
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             Decorar(e.Graphics, 0.10f, 0.20f, 90, Color.FromArgb(70, 255, 190, 170));
             Decorar(e.Graphics, 0.88f, 0.28f, 60, Color.FromArgb(70, 205, 190, 245));
