@@ -16,14 +16,20 @@ def obtener_conexion():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-@app.get("/jugadores")
-def jugadores():
+@app.post("/jugadores")
+def crear_jugador(nombre: str):
     conexion = obtener_conexion()
     cursor = conexion.cursor()
-    cursor.execute("SELECT id_jugador, nombre FROM jugadores")
-    datos = cursor.fetchall()
+    cursor.execute("SELECT id_jugador FROM jugadores WHERE nombre = %s", (nombre,))
+    fila = cursor.fetchone()
+    if fila is None:
+        cursor.execute("INSERT INTO jugadores (nombre) VALUES (%s)", (nombre,))
+        conexion.commit()
+        id_jugador = cursor.lastrowid
+    else:
+        id_jugador = fila["id_jugador"]
     conexion.close()
-    return datos
+    return {"id_jugador": id_jugador}
 
 @app.post("/partidas")
 def crear_partida():
