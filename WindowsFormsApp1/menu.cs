@@ -112,7 +112,6 @@ namespace WindowsFormsApp1
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-            // Título "UNO" con letras de colores y sombra
             string[] letras = { "U", "N", "O" };
             Color[] colores = { Rosa, Amarillo, Verde };
             using (var fuente = new Font("Segoe UI", 96, FontStyle.Bold, GraphicsUnit.Pixel))
