@@ -6,7 +6,7 @@ using System.Windows.Forms;
 namespace WindowsFormsApp1
 {
 
-    public class FormMenu : Form
+    public class menu : Form
     {
         static readonly Color RosaFondo1 = Color.FromArgb(255, 244, 244);
         static readonly Color RosaFondo2 = Color.FromArgb(255, 214, 226);
@@ -18,7 +18,7 @@ namespace WindowsFormsApp1
 
         BotonPastel btnJugar, btnHistorial, btnReglas, btnSalir;
         //botones  
-        public FormMenu()
+        public menu()
         {
             Text = "UNO";
             ClientSize = new Size(1100, 740);
