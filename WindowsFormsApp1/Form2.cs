@@ -1011,16 +1011,21 @@ namespace WindowsFormsApp1
 
             Jugador quienJuega = partida.getJugadorActual();
             partida.jugarCarta(carta);
-            cartaRobadaPendiente = null;
-            mesa.PasarDisponible = false;
-
-            if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
-
+            if (partida.necesitaElegirColor())
+            {
+                mesa.MostrarSelectorColor = true;
+                mesa.Invalidate();
+                return;
+            }
             if (partida.hayGanador())
             {
                 TerminarPartida();
                 return;
             }
+            cartaRobadaPendiente = null;
+            mesa.PasarDisponible = false;
+
+            if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
 
             if (quienJuega.uno() && !unoDeclarado)
             {
@@ -1042,6 +1047,11 @@ namespace WindowsFormsApp1
         {
             mesa.MostrarSelectorColor = false;
             partida.elegirColor(color);
+            if (partida.hayGanador())
+            {
+                TerminarPartida();
+                return;
+            }
             mesa.Invalidate();
         }
 
