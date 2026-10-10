@@ -746,7 +746,11 @@ namespace WindowsFormsApp1
             Boton(g, new RectangleF( W - ps - 20, H - us - ps - 40, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false); */
             if (AcusarUnoDisponible)
             {
-                Boton(g, new RectangleF(W / 2 - 55, 110, 110, 55), RosaFuerte, "Acusar UNO", () => AcusarUnoClick?.Invoke(), Color.White, 14f, false);
+                float aw = 120f;
+                float ah = 55f;
+                float ax = 20f;
+                float ay = H - ah - 20f;
+                Boton(g, new RectangleF(ax, ay, aw, ah), RosaFuerte, "Acusar UNO", () => AcusarUnoClick?.Invoke(), Color.White, 14f, false);
             }
         }
 
