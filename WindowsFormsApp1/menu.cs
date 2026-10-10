@@ -17,7 +17,7 @@ namespace WindowsFormsApp1
         static readonly Color Texto = Color.FromArgb(125, 65, 95);
 
         BotonPastel btnJugar, btnHistorial, btnReglas, btnSalir;
-
+        //botones  
         public FormMenu()
         {
             Text = "UNO";
