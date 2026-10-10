@@ -226,5 +226,25 @@ namespace WindowsFormsApp1
         {
             return comodinPendiente == 13 || comodinPendiente == 14;
         }
+        public int valorEnPuntos(Carta carta)
+        {
+            int valor = carta.getValor();
+            if (valor <= 9) return valor;
+            if (valor >= 10 && valor <= 12) return 20;
+            return 50;
+        }
+        public int calcularPuntosRonda()
+        {
+            int total = 0;
+            Jugador ganador = getGanador();
+            if (ganador == null) return 0;
+            foreach(Jugador jugador in jugadores)
+            {
+                if (jugador == ganador) continue;
+                foreach (Carta carta in jugador.getCartas())
+                    total += valorEnPuntos(carta);
+            }
+            return total;
+        }
     }
 }

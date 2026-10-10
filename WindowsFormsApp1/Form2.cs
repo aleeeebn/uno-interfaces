@@ -154,6 +154,9 @@ namespace WindowsFormsApp1
         public bool MostrarMenu = false;
         public string NombreGanador = "";
         public bool AcusarUnoDisponible = false;
+        public int[] Puntuacion = new int[3];
+        public string TituloVictoria = "Ganador de la ronda";
+
 
         public event Action AcusarUnoClick;
         public event Action VolverAJugarClick;
@@ -297,7 +300,7 @@ namespace WindowsFormsApp1
             }
             using (var titulo = new Font("Segoe UI", 30, FontStyle.Bold, GraphicsUnit.Pixel))
             {
-                Texto(g, "Fin de la partida", titulo, Cafe, new RectangleF(panel.X, panel.Y + 28, pw, 48));
+                Texto(g, TituloVictoria, titulo, Cafe, new RectangleF(panel.X, panel.Y + 28, pw, 48));
             }
             using (var nombre = new Font("Segoe UI", 27, FontStyle.Bold, GraphicsUnit.Pixel))
             {
@@ -315,7 +318,7 @@ namespace WindowsFormsApp1
                     Jugador jugador = Partida.getJugador(i);
                     int cartas = jugador.getCartas().Count;
                     int victorias = Puntos[i];
-                    string resultado = jugador.getNombre() + "  |  " + cartas + " cartas" + "  |  " + victorias + " victorias";
+                    string resultado = jugador.getNombre() + "  |  " + cartas + " cartas" + "  |  " + victorias + " victorias" + " | " + Puntuacion[i] + " puntos";
                     Color fondo = jugador.getNombre() == NombreGanador ? Mantequilla : Color.FromArgb(245, 230, 235);
 
                     var fila = new RectangleF(panel.X + 35, panel.Y + 200 + i * 43, pw - 70, 36);
@@ -991,6 +994,7 @@ namespace WindowsFormsApp1
             mesa.MostrarMenu = false;
             mesa.MostrarVictoria = false;
             mesa.NombreGanador = "";
+            mesa.TituloVictoria = "Ganador de la ronda";
             mesa.Invalidate();
         }
 
@@ -1115,7 +1119,13 @@ namespace WindowsFormsApp1
             Jugador ganador = partida.getGanador();
             if (ganador == null) return;
             int idx = partida.getJugadores().IndexOf(ganador);
-            if (idx >= 0) mesa.Puntos[idx]++;
+            int puntosGanados = partida.calcularPuntosRonda();
+            if (idx >= 0)
+            {
+                mesa.Puntos[idx]++;
+                mesa.Puntuacion[idx] += puntosGanados;
+            }
+            mesa.TituloVictoria = JuegoCompletoTeminado() ? "Campeón" : "Ganador de la ronda";
             mesa.NombreGanador = ganador.getNombre();
             mesa.MostrarSelectorColor = false;
             mesa.MostrarVictoria = true;
@@ -1138,6 +1148,12 @@ namespace WindowsFormsApp1
         {
             jugadorSinUno = null;
             mesa.AcusarUnoDisponible = false;
+        }
+        bool JuegoCompletoTeminado()
+        {
+            foreach(int puntos in mesa.Puntuacion)
+                if (puntos >= 500) return true;
+            return false;
         }
     }
 }
