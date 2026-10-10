@@ -135,7 +135,6 @@ namespace WindowsFormsApp1
                 }
             }
 
-            // Subtítulo en cápsula
             var cap = new Rectangle((ClientSize.Width - 300) / 2, (int)(ClientSize.Height / 2f - 130), 300, 44);
             using (var path = BotonPastel.RoundedRect(cap, 22))
             using (var fondo = new SolidBrush(Color.FromArgb(255, 244, 200)))
@@ -153,9 +152,7 @@ namespace WindowsFormsApp1
         }
     }
 
-    // ============================================================
-    //  Botón redondeado estilo pastel (control propio)
-    // ============================================================
+
     public class BotonPastel : Control
     {
         public Color ColorBase { get; set; } = Color.FromArgb(255, 160, 184);
