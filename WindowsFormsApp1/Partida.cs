@@ -150,10 +150,7 @@ namespace WindowsFormsApp1
         public void iniciaDescarte()
         {
             int i = 0;
-            while(i < mazo.getMazoSize() && mazo.getCarta(i).getValor() > 9)
-            {
-                i++;
-            }
+            while(i < mazo.getMazoSize() && mazo.getCarta(i).getValor() > 9) i++;
             if (i >= mazo.getMazoSize()) return;
             Carta carta = mazo.getCarta(i);
             juego.añadirCartas(carta);
@@ -163,11 +160,8 @@ namespace WindowsFormsApp1
         public Carta robarCarta()
         {
             siMazoEstaVacio();
-            if (mazo.estaVacio())
-                return null;
+            if (mazo.estaVacio()) return null;
             Carta carta = mazo.getCarta(0);
-            jugadores[turnoActual].añadirCarta(carta);
-            mazo.removeCarta(0);
             jugadores[turnoActual].añadirCarta(carta);
             mazo.removeCarta(0);
             return carta;
