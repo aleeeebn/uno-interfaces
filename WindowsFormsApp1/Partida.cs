@@ -124,6 +124,8 @@ namespace WindowsFormsApp1
         }
         public void jugarCarta(Carta carta)
         {
+            if (!getJugadorActual().getCartas().Contains(carta)) return;
+            if (!sePuedeJugar(carta)) return;
             jugadores[turnoActual].removeCarta(carta);
             juego.añadirCartas(carta);
             if (carta.getValor() == 13 || carta.getValor() == 14)
@@ -139,8 +141,15 @@ namespace WindowsFormsApp1
             Carta cartaActual = juego.getUltimaCarta();
             if (cartaActual == null)
                 return true;
-            if (carta.getColor() == "Comodin")
+            if (carta.getValor() == 13)
                 return true;
+            if(carta.getValor() == 14)
+            {
+                Jugador actual = getJugadorActual();
+                foreach(Carta otra in actual.getCartas())
+                    if (otra != carta && otra.getColor() == colorActual) return false;
+                return true;
+            }
             if (carta.getColor() == colorActual)
                 return true;
             if (carta.getValor() == cartaActual.getValor())
@@ -225,6 +234,26 @@ namespace WindowsFormsApp1
         public bool necesitaElegirColor()
         {
             return comodinPendiente == 13 || comodinPendiente == 14;
+        }
+        public int valorEnPuntos(Carta carta)
+        {
+            int valor = carta.getValor();
+            if (valor <= 9) return valor;
+            if (valor >= 10 && valor <= 12) return 20;
+            return 50;
+        }
+        public int calcularPuntosRonda()
+        {
+            int total = 0;
+            Jugador ganador = getGanador();
+            if (ganador == null) return 0;
+            foreach(Jugador jugador in jugadores)
+            {
+                if (jugador == ganador) continue;
+                foreach (Carta carta in jugador.getCartas())
+                    total += valorEnPuntos(carta);
+            }
+            return total;
         }
     }
 }
