@@ -1248,5 +1248,14 @@ namespace WindowsFormsApp1
                 if (puntos >= 500) return true;
             return false;
         }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing && !mesa.MostrarVictoria)
+            {
+                DialogResult respuesta = MessageBox.Show("¿Seguro que quieres salir de la partida?\nPerderás el progreso de la ronda actual.", "Salir de UNO", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                if (respuesta != DialogResult.Yes) e.Cancel = true;
+            }
+            base.OnFormClosing(e);
+        }
     }
 }
