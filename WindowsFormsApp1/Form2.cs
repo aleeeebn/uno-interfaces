@@ -455,11 +455,11 @@ namespace WindowsFormsApp1
                 Capsula(g, r, Mantequilla, Coral, 3);
                 Texto(g, turno, f, Cafe, r);
             }
-
+            bool bloqueado = MostrarSelectorColor;
             var mazo = new RectangleF(cx - cw - 14, cy - ch / 2, cw, ch);
             float ps = Math.Max(55f, H * 0.09f);
-            Color colorPasar = PasarDisponible ? Lavanda : Color.FromArgb(175, 175, 175);
-            Boton( g, new RectangleF(mazo.Left - ps - 22, mazo.Top + (mazo.Height - ps) / 2, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false);
+            Color colorPasar = (!bloqueado && PasarDisponible) ? Lavanda : Color.FromArgb(175, 175, 175);
+            Boton( g, new RectangleF(mazo.Left - ps - 22, mazo.Top + (mazo.Height - ps) / 2, ps, ps), colorPasar, "Pasar", (!bloqueado && PasarDisponible) ? (Action)(() => PasarClick?.Invoke()) : null, (!bloqueado && PasarDisponible) ? Cafe : Color.LightGray, ps * 0.24f, false);
             for (int i = 2; i >= 1; i--)
                 DibujarReverso(g, new RectangleF(mazo.X - i * 3, mazo.Y - i * 3, cw, ch));
             DibujarReverso(g, mazo);
@@ -574,15 +574,11 @@ namespace WindowsFormsApp1
 
         void DibujarPastillas(Graphics g, float W, float H, float cw, float ch)
         {
-            float pw = Math.Max(150f, W * 0.15f), ph = Math.Max(48f, H * 0.075f);
-            RectangleF[] rs =
-            {
-                new RectangleF((W - pw) / 2, H - ch - 26 - ph - 14, pw, ph),
-                new RectangleF(12, H * 0.17f, pw, ph),
-                new RectangleF(W - 12 - pw, H * 0.17f, pw, ph)
-            };
-            using (var f1 = new Font("Segoe UI", ph * 0.34f, FontStyle.Bold, GraphicsUnit.Pixel))
-            using (var f2 = new Font("Segoe UI", ph * 0.26f, FontStyle.Regular, GraphicsUnit.Pixel))
+            float pw = Math.Max(150f, W * 0.15f), ph = Math.Max(65f, H * 0.095f);
+            RectangleF[] rs = { new RectangleF((W - pw) / 2, H - ch - 26 - ph - 14, pw, ph), new RectangleF(12, H * 0.17f, pw, ph), new RectangleF(W - 12 - pw, H * 0.17f, pw, ph)};
+            using (var f1 = new Font("Segoe UI", ph * 0.28f, FontStyle.Bold, GraphicsUnit.Pixel))
+            using (var f2 = new Font("Segoe UI", ph * 0.20f, FontStyle.Regular, GraphicsUnit.Pixel))
+            using (var f3 = new Font("Segoe UI", ph * 0.19f, FontStyle.Bold, GraphicsUnit.Pixel))
             {
                 for (int seat = 0; seat < 3; seat++)
                 {
@@ -591,11 +587,17 @@ namespace WindowsFormsApp1
                     bool activo = idx == Partida.getTurnoActual();
                     Capsula(g, rs[seat], activo ? Mantequilla : Color.FromArgb(215, 255, 255, 255),
                             activo ? Coral : RosaFuerte, activo ? 4 : 2);
-                    var top = new RectangleF(rs[seat].X, rs[seat].Y + 2, rs[seat].Width, rs[seat].Height * 0.52f);
-                    var bot = new RectangleF(rs[seat].X, rs[seat].Y + rs[seat].Height * 0.48f, rs[seat].Width, rs[seat].Height * 0.5f);
+
+                    var top = new RectangleF(rs[seat].X, rs[seat].Y + 2, rs[seat].Width, rs[seat].Height * 0.36f);
+                    var mid = new RectangleF(rs[seat].X, rs[seat].Y + rs[seat].Height * 0.37f, rs[seat].Width, rs[seat].Height * 0.30f);
+                    var bot = new RectangleF(rs[seat].X, rs[seat].Y + rs[seat].Height * 0.67f, rs[seat].Width, rs[seat].Height * 0.28f);
+
                     int pts = idx < Puntos.Length ? Puntos[idx] : 0;
+                    int puntuacion = idx < Puntuacion.Length ? Puntuacion[idx] : 0;
+
                     Texto(g, jug.getNombre(), f1, Cafe, top);
-                    Texto(g, jug.getCartas().Count + " cartas   ★ " + pts, f2, Cafe, bot);
+                    Texto(g, jug.getCartas().Count + " cartas   ★ " + pts, f2, Cafe, mid);
+                    Texto(g, puntuacion + " puntos", f3, Cafe, bot);
                 }
             }
         }
@@ -731,6 +733,7 @@ namespace WindowsFormsApp1
         }
         void DibujarBotones(Graphics g, float W, float H)
         {
+            bool bloqueado = MostrarSelectorColor;
             float bs = Math.Max(40f, H * 0.065f);
 
             Boton(g, new RectangleF(W - bs - 16, 14, bs, bs), Color.FromArgb(255, 160, 175), "✕",
@@ -742,19 +745,19 @@ namespace WindowsFormsApp1
 
             float us = Math.Max(80f, H * 0.14f);
             bool unoDisponible = Partida != null && Partida.getJugadorActual().getCartas().Count == 2;
-            Color colorBoton = unoDisponible ? Coral : Color.FromArgb(175, 175, 175);
-            Color colorTexto = unoDisponible ? Color.White : Color.FromArgb(225, 225, 225);
-            Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), colorBoton, "UNO!", unoDisponible ? (Action)(() => { if (UnoClick != null) UnoClick(); }) : null, colorTexto, us * 0.26f, false);
+            Color colorBoton = (!bloqueado && unoDisponible) ? Coral : Color.FromArgb(175, 175, 175);
+            Color colorTexto = (!bloqueado && unoDisponible) ? Color.White : Color.FromArgb(225, 225, 225);
+            Boton(g, new RectangleF(W - us - 20, H - us - 20, us, us), colorBoton, "UNO!", (!bloqueado && unoDisponible) ? (Action)(() => { if (UnoClick != null) UnoClick(); }) : null, colorTexto, us * 0.26f, false);
             /*float ps = Math.Max(65f, H * 0.10f);
             Color colorPasar = PasarDisponible ? Lavanda : Color.FromArgb(175, 175, 175);
             Boton(g, new RectangleF( W - ps - 20, H - us - ps - 40, ps, ps), colorPasar, "Pasar", PasarDisponible ? (Action)(() => PasarClick?.Invoke()) : null, PasarDisponible ? Cafe : Color.LightGray, ps * 0.24f, false); */
-            if (AcusarUnoDisponible)
+            if (AcusarUnoDisponible || bloqueado)
             {
                 float aw = 120f;
                 float ah = 55f;
                 float ax = 20f;
                 float ay = H - ah - 20f;
-                Boton(g, new RectangleF(ax, ay, aw, ah), RosaFuerte, "Acusar UNO", () => AcusarUnoClick?.Invoke(), Color.White, 14f, false);
+                Boton(g, new RectangleF(ax, ay, aw, ah), (!bloqueado && AcusarUnoDisponible) ? RosaFuerte : Color.FromArgb(175, 175, 175), "Acusar UNO", (!bloqueado && AcusarUnoDisponible) ? (Action)(() => AcusarUnoClick?.Invoke()) : null, (!bloqueado && AcusarUnoDisponible) ? Color.White : Color.FromArgb(225, 225, 225), 14f, false);
             }
         }
 
@@ -1057,6 +1060,9 @@ namespace WindowsFormsApp1
             mesa.MostrarVictoria = false;
             mesa.NombreGanador = "";
             mesa.TituloVictoria = "Ganador de la ronda";
+            jugadorSinUno = null;
+            mesa.AcusarUnoDisponible = false;
+            mesa.CartaRobadaPendiente = null;
             mesa.Invalidate();
         }
 
@@ -1075,40 +1081,40 @@ namespace WindowsFormsApp1
                 return;
             }
 
+
             Jugador quienJuega = partida.getJugadorActual();
             LogJugada(quienJuega, carta);
             partida.jugarCarta(carta);
+            cartaRobadaPendiente = null;
+            mesa.CartaRobadaPendiente = null;
+            mesa.PasarDisponible = false;
+
+            if (carta.getValor() == 11)
+                mesa.SentidoHorario = !mesa.SentidoHorario;
+
+            if (quienJuega.uno() && !unoDeclarado)
+            {
+                jugadorSinUno = quienJuega;
+            }
+            else
+            {
+                jugadorSinUno = null;
+            }
+            
+            unoDeclarado = false;
             if (partida.necesitaElegirColor())
             {
+                mesa.AcusarUnoDisponible = false;
                 mesa.MostrarSelectorColor = true;
                 mesa.Invalidate();
                 return;
             }
+            mesa.AcusarUnoDisponible = jugadorSinUno != null;
             if (partida.hayGanador())
             {
                 TerminarPartida();
                 return;
             }
-            
-            cartaRobadaPendiente = null;
-            mesa.CartaRobadaPendiente = cartaRobadaPendiente;
-            mesa.PasarDisponible = false;
-
-            if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
-
-            if (quienJuega.uno() && !unoDeclarado)
-            {
-                jugadorSinUno = quienJuega;
-            } else
-            {
-                jugadorSinUno = null;
-            }
-            mesa.AcusarUnoDisponible = jugadorSinUno != null;
-            unoDeclarado = false;
-
-            if (partida.necesitaElegirColor())
-                mesa.MostrarSelectorColor = true;
-
             mesa.Invalidate();
         }
 
@@ -1117,6 +1123,7 @@ namespace WindowsFormsApp1
             mesa.MostrarSelectorColor = false;
             LogMov(partida.getJugadorActual(), "elegir_color", color);
             partida.elegirColor(color);
+            mesa.AcusarUnoDisponible = jugadorSinUno != null;
             if (partida.hayGanador())
             {
                 TerminarPartida();
@@ -1159,6 +1166,7 @@ namespace WindowsFormsApp1
 
         void AlPresionarUno()
         {
+            if (mesa.MostrarSelectorColor) return;
             int cartas = partida.getJugadorActual().getCartas().Count;
             if (cartas == 2)
             {
@@ -1173,6 +1181,7 @@ namespace WindowsFormsApp1
         }
         void AlPasar()
         {
+            if (mesa.MostrarSelectorColor) return;
             if (cartaRobadaPendiente == null || mesa.MostrarSelectorColor)
                 return;
             cartaRobadaPendiente = null;
@@ -1218,6 +1227,7 @@ namespace WindowsFormsApp1
 
         void AlAcusarUno()
         {
+            if (mesa.MostrarSelectorColor) return;
             if (jugadorSinUno == null) return;
             Jugador infractor = jugadorSinUno;
             LogMov(infractor, "penalizacion_uno");
@@ -1237,6 +1247,15 @@ namespace WindowsFormsApp1
             foreach(int puntos in mesa.Puntuacion)
                 if (puntos >= 500) return true;
             return false;
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing && !mesa.MostrarVictoria)
+            {
+                DialogResult respuesta = MessageBox.Show("¿Seguro que quieres salir de la partida?\nPerderás el progreso de la ronda actual.", "Salir de UNO", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                if (respuesta != DialogResult.Yes) e.Cancel = true;
+            }
+            base.OnFormClosing(e);
         }
     }
 }
