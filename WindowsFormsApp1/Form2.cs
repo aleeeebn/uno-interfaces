@@ -1057,6 +1057,9 @@ namespace WindowsFormsApp1
             mesa.MostrarVictoria = false;
             mesa.NombreGanador = "";
             mesa.TituloVictoria = "Ganador de la ronda";
+            jugadorSinUno = null;
+            mesa.AcusarUnoDisponible = false;
+            mesa.CartaRobadaPendiente = null;
             mesa.Invalidate();
         }
 
@@ -1075,9 +1078,27 @@ namespace WindowsFormsApp1
                 return;
             }
 
+
             Jugador quienJuega = partida.getJugadorActual();
             LogJugada(quienJuega, carta);
             partida.jugarCarta(carta);
+            cartaRobadaPendiente = null;
+            mesa.CartaRobadaPendiente = null;
+            mesa.PasarDisponible = false;
+
+            if (carta.getValor() == 11)
+                mesa.SentidoHorario = !mesa.SentidoHorario;
+
+            if (quienJuega.uno() && !unoDeclarado)
+            {
+                jugadorSinUno = quienJuega;
+            }
+            else
+            {
+                jugadorSinUno = null;
+            }
+            mesa.AcusarUnoDisponible = jugadorSinUno != null;
+            unoDeclarado = false;
             if (partida.necesitaElegirColor())
             {
                 mesa.MostrarSelectorColor = true;
@@ -1089,26 +1110,6 @@ namespace WindowsFormsApp1
                 TerminarPartida();
                 return;
             }
-            
-            cartaRobadaPendiente = null;
-            mesa.CartaRobadaPendiente = cartaRobadaPendiente;
-            mesa.PasarDisponible = false;
-
-            if (carta.getValor() == 11) mesa.SentidoHorario = !mesa.SentidoHorario;
-
-            if (quienJuega.uno() && !unoDeclarado)
-            {
-                jugadorSinUno = quienJuega;
-            } else
-            {
-                jugadorSinUno = null;
-            }
-            mesa.AcusarUnoDisponible = jugadorSinUno != null;
-            unoDeclarado = false;
-
-            if (partida.necesitaElegirColor())
-                mesa.MostrarSelectorColor = true;
-
             mesa.Invalidate();
         }
 
