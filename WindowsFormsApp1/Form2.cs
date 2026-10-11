@@ -574,15 +574,11 @@ namespace WindowsFormsApp1
 
         void DibujarPastillas(Graphics g, float W, float H, float cw, float ch)
         {
-            float pw = Math.Max(150f, W * 0.15f), ph = Math.Max(48f, H * 0.075f);
-            RectangleF[] rs =
-            {
-                new RectangleF((W - pw) / 2, H - ch - 26 - ph - 14, pw, ph),
-                new RectangleF(12, H * 0.17f, pw, ph),
-                new RectangleF(W - 12 - pw, H * 0.17f, pw, ph)
-            };
-            using (var f1 = new Font("Segoe UI", ph * 0.34f, FontStyle.Bold, GraphicsUnit.Pixel))
-            using (var f2 = new Font("Segoe UI", ph * 0.26f, FontStyle.Regular, GraphicsUnit.Pixel))
+            float pw = Math.Max(150f, W * 0.15f), ph = Math.Max(65f, H * 0.095f);
+            RectangleF[] rs = { new RectangleF((W - pw) / 2, H - ch - 26 - ph - 14, pw, ph), new RectangleF(12, H * 0.17f, pw, ph), new RectangleF(W - 12 - pw, H * 0.17f, pw, ph)};
+            using (var f1 = new Font("Segoe UI", ph * 0.28f, FontStyle.Bold, GraphicsUnit.Pixel))
+            using (var f2 = new Font("Segoe UI", ph * 0.20f, FontStyle.Regular, GraphicsUnit.Pixel))
+            using (var f3 = new Font("Segoe UI", ph * 0.19f, FontStyle.Bold, GraphicsUnit.Pixel))
             {
                 for (int seat = 0; seat < 3; seat++)
                 {
@@ -591,11 +587,17 @@ namespace WindowsFormsApp1
                     bool activo = idx == Partida.getTurnoActual();
                     Capsula(g, rs[seat], activo ? Mantequilla : Color.FromArgb(215, 255, 255, 255),
                             activo ? Coral : RosaFuerte, activo ? 4 : 2);
-                    var top = new RectangleF(rs[seat].X, rs[seat].Y + 2, rs[seat].Width, rs[seat].Height * 0.52f);
-                    var bot = new RectangleF(rs[seat].X, rs[seat].Y + rs[seat].Height * 0.48f, rs[seat].Width, rs[seat].Height * 0.5f);
+
+                    var top = new RectangleF(rs[seat].X, rs[seat].Y + 2, rs[seat].Width, rs[seat].Height * 0.36f);
+                    var mid = new RectangleF(rs[seat].X, rs[seat].Y + rs[seat].Height * 0.37f, rs[seat].Width, rs[seat].Height * 0.30f);
+                    var bot = new RectangleF(rs[seat].X, rs[seat].Y + rs[seat].Height * 0.67f, rs[seat].Width, rs[seat].Height * 0.28f);
+
                     int pts = idx < Puntos.Length ? Puntos[idx] : 0;
+                    int puntuacion = idx < Puntuacion.Length ? Puntuacion[idx] : 0;
+
                     Texto(g, jug.getNombre(), f1, Cafe, top);
-                    Texto(g, jug.getCartas().Count + " cartas   ★ " + pts, f2, Cafe, bot);
+                    Texto(g, jug.getCartas().Count + " cartas   ★ " + pts, f2, Cafe, mid);
+                    Texto(g, puntuacion + " puntos", f3, Cafe, bot);
                 }
             }
         }
