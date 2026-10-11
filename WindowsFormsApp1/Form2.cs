@@ -951,6 +951,7 @@ namespace WindowsFormsApp1
         string[] nombresJugadores;
         int idPartida = 0;
         List<int> idsJugadores = new List<int>();
+        bool juegoTerminado = false;
         public Form2(string[] nombres)
         {
             nombresJugadores = (string[])nombres.Clone();
@@ -1033,11 +1034,18 @@ namespace WindowsFormsApp1
 
         void NuevaPartida()
         {
+            if (juegoTerminado)
+            {
+                Array.Clear(mesa.Puntos, 0, mesa.Puntos.Length);
+                Array.Clear(mesa.Puntuacion, 0, mesa.Puntuacion.Length);
+                juegoTerminado = false;
+            }
             partida = new Partida();
             for (int i = 0; i < 3; i++)
                 partida.getJugador(i).setNombre(nombresJugadores[i]);
             partida.repartir();
             partida.iniciaDescarte();
+            if (idPartida == 0) IniciarPartidaBD();
             unoDeclarado = false;
 
             mesa.Partida = partida;
@@ -1191,7 +1199,15 @@ namespace WindowsFormsApp1
                 mesa.Puntos[idx]++;
                 mesa.Puntuacion[idx] += puntosGanados;
             }
-            mesa.TituloVictoria = JuegoCompletoTeminado() ? "Campeón" : "Ganador de la ronda";
+            LogMov(ganador, "ganar_ronda", null, puntosGanados);
+            bool campeon = JuegoCompletoTeminado();
+            if (campeon)
+            {
+                TerminarPartidaBD(ganador);
+                idPartida = 0;
+                juegoTerminado = true;
+            }
+            mesa.TituloVictoria = campeon ? "Campeón" : "Ganador de la ronda";
             mesa.NombreGanador = ganador.getNombre();
             mesa.MostrarSelectorColor = false;
             mesa.MostrarVictoria = true;
@@ -1204,6 +1220,7 @@ namespace WindowsFormsApp1
         {
             if (jugadorSinUno == null) return;
             Jugador infractor = jugadorSinUno;
+            LogMov(infractor, "penalizacion_uno");
             partida.robarCartas(infractor, 2);
             jugadorSinUno = null;
             mesa.AcusarUnoDisponible = false;
