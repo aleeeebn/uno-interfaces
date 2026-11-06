@@ -158,6 +158,14 @@ namespace WindowsFormsApp1
         public int[] Puntuacion = new int[3];
         public string TituloVictoria = "Ganador de la ronda";
         public Carta CartaRobadaPendiente = null;
+        public int JugadorLocal = -1;
+        public bool EntradaHabilitada = true;
+
+        bool EsMiTurno {
+            get {
+                return EntradaHabilitada && Partida != null && (JugadorLocal < 0 || Partida.getTurnoActual() == JugadorLocal);
+            }
+        }
 
         public event Action AcusarUnoClick;
         public event Action VolverAJugarClick;
@@ -378,12 +386,12 @@ namespace WindowsFormsApp1
 
         Jugador JugadorEnAsiento(int seat)
         {
-            return Partida.getJugador(seat);
+            return Partida.getJugador(IndiceEnAsiento(seat));
         }
 
         int IndiceEnAsiento(int seat)
         {
-            return seat;
+            return JugadorLocal < 0 ? seat : (JugadorLocal + seat) % 3;
         }
 
 
@@ -455,7 +463,7 @@ namespace WindowsFormsApp1
                 Capsula(g, r, Mantequilla, Coral, 3);
                 Texto(g, turno, f, Cafe, r);
             }
-            bool bloqueado = MostrarSelectorColor;
+            bool bloqueado = MostrarSelectorColor || !EsMiTurno;
             var mazo = new RectangleF(cx - cw - 14, cy - ch / 2, cw, ch);
             float ps = Math.Max(55f, H * 0.09f);
             Color colorPasar = (!bloqueado && PasarDisponible) ? Lavanda : Color.FromArgb(175, 175, 175);
@@ -463,7 +471,14 @@ namespace WindowsFormsApp1
             for (int i = 2; i >= 1; i--)
                 DibujarReverso(g, new RectangleF(mazo.X - i * 3, mazo.Y - i * 3, cw, ch));
             DibujarReverso(g, mazo);
-            zonas.Add(new Zona { R = mazo, Accion = () => { if (RobarClick != null) RobarClick(); } });
+            if (!bloqueado && CartaRobadaPendiente == null)
+            {
+                zonas.Add(new Zona
+                {
+                    R = mazo,
+                    Accion = () => RobarClick?.Invoke()
+                });
+            }
             using (var f = new Font("Segoe UI", Math.Max(11f, H * 0.022f), FontStyle.Bold, GraphicsUnit.Pixel))
                 Texto(g, "Robar (" + Partida.getMazo().getMazoSize() + ")", f, Cafe,
                       new RectangleF(mazo.X - 20, mazo.Bottom + 6, cw + 40, 22)); 
@@ -504,7 +519,9 @@ namespace WindowsFormsApp1
             int n = mano.Count;
             if (n == 0) return;
 
-            bool turnoActivo = seat == Partida.getTurnoActual();
+            bool manoPropia = JugadorLocal < 0 || IndiceEnAsiento(seat) == JugadorLocal;
+
+            bool turnoActivo = EntradaHabilitada && manoPropia && IndiceEnAsiento(seat) == Partida.getTurnoActual();
             float elevacion = 22f;
 
             for (int i = 0; i < n; i++)
@@ -563,7 +580,13 @@ namespace WindowsFormsApp1
                             bounds.X -= 12f;
                     }
                 }
-                Rotar(g, bounds, ang, r => { DibujarCara(g, r, carta); });
+                Rotar(g, bounds, ang, r =>
+                {
+                    if (manoPropia)
+                        DibujarCara(g, r, carta);
+                    else
+                        DibujarReverso(g, r);
+                });
                 if (turnoActivo && !MostrarSelectorColor)
                 {
                     int ii = i;
@@ -733,7 +756,7 @@ namespace WindowsFormsApp1
         }
         void DibujarBotones(Graphics g, float W, float H)
         {
-            bool bloqueado = MostrarSelectorColor;
+            bool bloqueado = MostrarSelectorColor || !EsMiTurno;
             float bs = Math.Max(40f, H * 0.065f);
 
             Boton(g, new RectangleF(W - bs - 16, 14, bs, bs), Color.FromArgb(255, 160, 175), "✕",

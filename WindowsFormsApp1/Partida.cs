@@ -255,5 +255,40 @@ namespace WindowsFormsApp1
             }
             return total;
         }
+        public void CargarVistaRed(EstadoUno estado)
+        {
+            turnoActual = estado.Turno;
+            colorActual = estado.Color;
+            direccion = estado.Horario ? 1 : -1;
+            comodinPendiente = estado.ElegirColor ? 13 : 0;
+
+            for (int i = 0; i < jugadores.Count; i++)
+            {
+                jugadores[i].setNombre(estado.Nombres[i]);
+                jugadores[i].getCartas().Clear();
+
+                if (i == estado.MiJugador)
+                {
+                    foreach (CartaRed carta in estado.Mano)
+                        jugadores[i].añadirCarta(carta.Crear());
+                }
+                else
+                {
+                    for (int j = 0; j < estado.Cantidades[i]; j++)
+                        jugadores[i].añadirCarta(new Carta("Oculta", -1));
+                }
+            }
+
+            while (!mazo.estaVacio())
+                mazo.removeCarta(0);
+
+            for (int i = 0; i < estado.CantidadMazo; i++)
+                mazo.add(new Carta("Oculta", -1));
+
+            juego = new CartasJuego();
+
+            if (estado.Descarte != null)
+                juego.añadirCartas(estado.Descarte.Crear());
+        }
     }
 }
