@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 namespace WindowsFormsApp1
 { 
@@ -101,7 +103,8 @@ namespace WindowsFormsApp1
                 Location = new Point(45, 190),
                 Size = new Size(350, 30),
                 Font = new Font("Segoe UI", 13),
-                Text = "192.168.1."
+                Text = ObtenerIpLocal(),
+                ReadOnly = false
             };
 
             var crear = new BotonPastel
@@ -184,6 +187,50 @@ namespace WindowsFormsApp1
                 (ClientSize.Height - panelNombres.Height) / 2);
 
             panelNombres.BringToFront();
+        }
+        private string ObtenerIpLocal()
+        {
+            string alternativa = "";
+
+            foreach (NetworkInterface adaptador in
+                     NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (adaptador.OperationalStatus != OperationalStatus.Up ||
+                    adaptador.NetworkInterfaceType == NetworkInterfaceType.Loopback ||
+                    adaptador.NetworkInterfaceType == NetworkInterfaceType.Tunnel)
+                {
+                    continue;
+                }
+
+                IPInterfaceProperties propiedades = adaptador.GetIPProperties();
+
+                foreach (UnicastIPAddressInformation direccion in
+                         propiedades.UnicastAddresses)
+                {
+                    if (direccion.Address.AddressFamily != AddressFamily.InterNetwork)
+                        continue;
+
+                    string ip = direccion.Address.ToString();
+
+                    if (ip.StartsWith("169.254."))
+                        continue;
+
+                    foreach (GatewayIPAddressInformation puerta in
+                             propiedades.GatewayAddresses)
+                    {
+                        if (puerta.Address.AddressFamily == AddressFamily.InterNetwork &&
+                            puerta.Address.ToString() != "0.0.0.0")
+                        {
+                            return ip;
+                        }
+                    }
+
+                    if (alternativa == "")
+                        alternativa = ip;
+                }
+            }
+
+            return alternativa;
         }
         void MostrarPantallaNombres()
         {
