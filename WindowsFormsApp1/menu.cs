@@ -392,6 +392,7 @@ namespace WindowsFormsApp1
 
                 foreach (JToken jugador in jugadores)
                 {
+                    datos.DefaultView.Sort = "Ganadas DESC, Jugador ASC";
                     datos.Rows.Add(
                         (string)jugador["nombre"],
                         (int)jugador["jugadas"],
@@ -422,7 +423,7 @@ namespace WindowsFormsApp1
                     var tabla = new DataGridView
                     {
                         Dock = DockStyle.Fill,
-                        DataSource = datos,
+                        DataSource = datos.DefaultView,
                         ReadOnly = true,
                         AllowUserToAddRows = false,
                         AllowUserToDeleteRows = false,
