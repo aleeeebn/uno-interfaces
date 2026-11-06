@@ -72,6 +72,7 @@
     </Compile>
     <Compile Include="Jugador.cs" />
     <Compile Include="Mazo.cs" />
+    <Compile Include="MensajeUno.cs" />
     <Compile Include="Menu.cs">
       <SubType>Form</SubType>
     </Compile>
