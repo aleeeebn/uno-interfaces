@@ -73,6 +73,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="InicioApi.cs" />
     <Compile Include="Jugador.cs" />
     <Compile Include="Mazo.cs" />
     <Compile Include="MensajeUno.cs" />

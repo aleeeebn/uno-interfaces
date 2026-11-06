@@ -45,6 +45,33 @@ namespace WindowsFormsApp1
 
             Resize += (s, e) => { Acomodar(); Invalidate(); };
             Acomodar();
+            Shown += async (s, e) =>
+            {
+                btnHistorial.Enabled = false;
+
+                try
+                {
+                    await InicioApi.AsegurarInicioAsync();
+                }
+                catch (Exception ex)
+                {
+                    if (!IsDisposed)
+                    {
+                        MessageBox.Show(
+                            this,
+                            "No se pudo iniciar la API:\n" + ex.Message,
+                            "Conexión con la base de datos",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                    }
+                }
+                finally
+                {
+                    if (!IsDisposed)
+                        btnHistorial.Enabled = true;
+                }
+            };
         }
 
         
@@ -345,10 +372,13 @@ namespace WindowsFormsApp1
 
         async void AbrirHistorial()
         {
+
             btnHistorial.Enabled = false;
 
             try
             {
+                await InicioApi.AsegurarInicioAsync();
+
                 string json = await ApiCliente.ObtenerHistorial();
                 JArray jugadores = JArray.Parse(json);
 
