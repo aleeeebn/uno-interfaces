@@ -32,7 +32,7 @@ namespace WindowsFormsApp1
             btnReglas = CrearBoton("Reglas", Verde);
             btnSalir = CrearBoton("Salir", Lila);
 
-            btnJugar.Click += (s, e) => MostrarPantallaNombres();
+            btnJugar.Click += (s, e) => MostrarSalaRed();
             btnHistorial.Click += (s, e) => AbrirHistorial();
             btnReglas.Click += (s, e) => MostrarReglas();
             btnSalir.Click += (s, e) => Close();
@@ -48,6 +48,142 @@ namespace WindowsFormsApp1
         BotonPastel CrearBoton(string texto, Color color)
         {
             return new BotonPastel { Text = texto, ColorBase = color, ColorTexto = Texto, Size = new Size(320, 78) };
+        }
+        void MostrarSalaRed()
+        {
+            btnJugar.Visible = false;
+            btnHistorial.Visible = false;
+            btnReglas.Visible = false;
+            btnSalir.Visible = false;
+
+            panelNombres = new Panel
+            {
+                Size = new Size(440, 440),
+                BackColor = Color.FromArgb(255, 250, 245)
+            };
+
+            var titulo = new Label
+            {
+                Text = "Jugar en red",
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = Texto,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(20, 20),
+                Size = new Size(400, 50)
+            };
+
+            var etiquetaNombre = new Label
+            {
+                Text = "Tu nombre",
+                ForeColor = Texto,
+                Location = new Point(45, 90),
+                AutoSize = true
+            };
+
+            var nombre = new TextBox
+            {
+                Location = new Point(45, 115),
+                Size = new Size(350, 30),
+                Font = new Font("Segoe UI", 13),
+                MaxLength = 20
+            };
+
+            var etiquetaIp = new Label
+            {
+                Text = "IP del anfitrión (solo para unirse)",
+                ForeColor = Texto,
+                Location = new Point(45, 165),
+                AutoSize = true
+            };
+
+            var ip = new TextBox
+            {
+                Location = new Point(45, 190),
+                Size = new Size(350, 30),
+                Font = new Font("Segoe UI", 13),
+                Text = "192.168.1."
+            };
+
+            var crear = new BotonPastel
+            {
+                Text = "Crear partida",
+                ColorBase = Rosa,
+                ColorTexto = Texto,
+                Size = new Size(190, 65),
+                Location = new Point(25, 255)
+            };
+
+            var unirse = new BotonPastel
+            {
+                Text = "Unirse",
+                ColorBase = Verde,
+                ColorTexto = Texto,
+                Size = new Size(190, 65),
+                Location = new Point(225, 255)
+            };
+
+            var volver = new BotonPastel
+            {
+                Text = "Volver",
+                ColorBase = Lila,
+                ColorTexto = Texto,
+                Size = new Size(190, 65),
+                Location = new Point(125, 340)
+            };
+
+            Action<bool> abrir = crearServidor =>
+            {
+                string nombreJugador = nombre.Text.Trim();
+
+                if (nombreJugador.Length == 0)
+                {
+                    MessageBox.Show("Escribe tu nombre.");
+                    return;
+                }
+
+                if (!crearServidor && string.IsNullOrWhiteSpace(ip.Text))
+                {
+                    MessageBox.Show("Escribe la IP del anfitrión.");
+                    return;
+                }
+
+                var juego = new Form2(
+                    crearServidor, nombreJugador, ip.Text.Trim());
+
+                juego.FormClosed += (s, e) => Show();
+
+                Hide();
+                juego.Show();
+            };
+
+            crear.Click += (s, e) => abrir(true);
+            unirse.Click += (s, e) => abrir(false);
+
+            volver.Click += (s, e) =>
+            {
+                Controls.Remove(panelNombres);
+                panelNombres.Dispose();
+                panelNombres = null;
+
+                btnJugar.Visible = true;
+                btnHistorial.Visible = true;
+                btnReglas.Visible = true;
+                btnSalir.Visible = true;
+            };
+
+            panelNombres.Controls.AddRange(new Control[]
+            {
+                titulo, etiquetaNombre, nombre,
+                etiquetaIp, ip, crear, unirse, volver
+            });
+
+            Controls.Add(panelNombres);
+
+            panelNombres.Location = new Point(
+                (ClientSize.Width - panelNombres.Width) / 2,
+                (ClientSize.Height - panelNombres.Height) / 2);
+
+            panelNombres.BringToFront();
         }
         void MostrarPantallaNombres()
         {
@@ -155,23 +291,7 @@ namespace WindowsFormsApp1
 
         void AbrirJuego(string[] jugadores)
         {
-            var juego = new Form2(jugadores);
-            juego.FormClosed += (s, e) =>
-            {
-                if (panelNombres != null)
-                {
-                    Controls.Remove(panelNombres);
-                    panelNombres.Dispose();
-                    panelNombres = null;
-                }
-                btnJugar.Visible = true;
-                btnHistorial.Visible = true;
-                btnReglas.Visible = true;
-                btnSalir.Visible = true;
-                Show();
-            };
-            Hide();
-            juego.Show();
+            MostrarSalaRed();
         }
 
         void AbrirHistorial()

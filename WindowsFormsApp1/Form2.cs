@@ -978,9 +978,13 @@ namespace WindowsFormsApp1
         int idPartida = 0;
         List<int> idsJugadores = new List<int>();
         bool juegoTerminado = false;
-        public Form2(string[] nombres)
+        public Form2(bool crearServidor, string nombre, string ipServidor = "")
         {
-            nombresJugadores = (string[])nombres.Clone();
+            nombresJugadores = new[]
+            {
+                nombre, "Esperando...", "Esperando..."
+            };
+
             InitializeComponent();
 
             Text = "UNO";
@@ -990,22 +994,57 @@ namespace WindowsFormsApp1
             BackColor = Color.FromArgb(255, 230, 225);
             DoubleBuffered = true;
 
-            mesa = new Tablero { Dock = DockStyle.Fill };
+            mesa = new Tablero
+            {
+                Dock = DockStyle.Fill,
+                EntradaHabilitada = false
+            };
+
             Controls.Add(mesa);
 
-            mesa.SalirClick += () => Close();
-            mesa.CartaClick += AlHacerClicEnCarta;
-            mesa.RobarClick += AlRobar;
-            mesa.UnoClick += AlPresionarUno;
-            mesa.ColorElegido += AlElegirColor;
-            mesa.PasarClick += AlPasar;
-            mesa.VolverAJugarClick += NuevaPartida;
-            mesa.AcusarUnoClick += AlAcusarUno;
-            mesa.IrMenuClick += () =>
+            espera = new Label
             {
-                Close();
+                Dock = DockStyle.Top,
+                Height = 55,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(255, 244, 200),
+                ForeColor = Color.FromArgb(125, 65, 95),
+                Font = new Font("Segoe UI", 13, FontStyle.Bold),
+                Text = "Conectando..."
             };
-            NuevaPartida();
+
+            Controls.Add(espera);
+            espera.BringToFront();
+
+            mesa.SalirClick += Close;
+            mesa.IrMenuClick += Close;
+
+            mesa.CartaClick += carta =>
+            {
+                if (!salaLista) return;
+
+                int indice = partida.getJugador(miJugador)
+                    .getCartas().IndexOf(carta);
+
+                Solicitar("JUGAR", indice);
+            };
+
+            mesa.RobarClick += () => Solicitar("ROBAR");
+            mesa.PasarClick += () => Solicitar("PASAR");
+            mesa.UnoClick += () => Solicitar("UNO");
+            mesa.AcusarUnoClick += () => Solicitar("ACUSAR");
+            mesa.ColorElegido += color => Solicitar("COLOR", -1, color);
+            mesa.VolverAJugarClick += () => Solicitar("NUEVA");
+
+            Shown += async (s, e) =>
+                await AbrirRedAsync(crearServidor, nombre, ipServidor);
+
+            FormClosed += (s, e) =>
+            {
+                cerrandoRed = true;
+                clienteRed?.Dispose();
+                servidorRed?.Dispose();
+            };
         }
         async void IniciarPartidaBD()
         {
@@ -1095,7 +1134,7 @@ namespace WindowsFormsApp1
                 mesa.MostrarMensaje("Después de robar solo puedes jugar la carta robada");
                 return;
             }
-            if (mesa.MostrarSelectorColor) return;
+            if (partida.necesitaElegirColor()) return;
 
             if (!partida.sePuedeJugar(carta))
             {
@@ -1156,7 +1195,7 @@ namespace WindowsFormsApp1
 
         void AlRobar()
         {
-            if (mesa.MostrarSelectorColor) return;
+            if (partida.necesitaElegirColor()) return;
             if(cartaRobadaPendiente != null)
             {
                 mesa.MostrarMensaje("Ya robaste una carta");
@@ -1188,7 +1227,7 @@ namespace WindowsFormsApp1
 
         void AlPresionarUno()
         {
-            if (mesa.MostrarSelectorColor) return;
+            if (partida.necesitaElegirColor()) return;
             int cartas = partida.getJugadorActual().getCartas().Count;
             if (cartas == 2)
             {
@@ -1203,7 +1242,7 @@ namespace WindowsFormsApp1
         }
         void AlPasar()
         {
-            if (mesa.MostrarSelectorColor) return;
+            if (partida.necesitaElegirColor()) return;
             if (cartaRobadaPendiente == null || mesa.MostrarSelectorColor)
                 return;
             cartaRobadaPendiente = null;
@@ -1249,7 +1288,7 @@ namespace WindowsFormsApp1
 
         void AlAcusarUno()
         {
-            if (mesa.MostrarSelectorColor) return;
+            if (partida.necesitaElegirColor()) return;
             if (jugadorSinUno == null) return;
             Jugador infractor = jugadorSinUno;
             LogMov(infractor, "penalizacion_uno");
