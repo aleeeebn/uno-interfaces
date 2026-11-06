@@ -4,6 +4,8 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Data;
+using Newtonsoft.Json.Linq;
 
 namespace WindowsFormsApp1
 { 
@@ -341,9 +343,146 @@ namespace WindowsFormsApp1
             MostrarSalaRed();
         }
 
-        void AbrirHistorial()
+        async void AbrirHistorial()
         {
-            MessageBox.Show("Aquí irá el historial de partidas.", "Historial");
+            btnHistorial.Enabled = false;
+
+            try
+            {
+                string json = await ApiCliente.ObtenerHistorial();
+                JArray jugadores = JArray.Parse(json);
+
+                if (IsDisposed) return;
+
+                var datos = new DataTable();
+                datos.Columns.Add("Jugador", typeof(string));
+                datos.Columns.Add("Jugadas", typeof(int));
+                datos.Columns.Add("Ganadas", typeof(int));
+                datos.Columns.Add("Perdidas", typeof(int));
+
+                foreach (JToken jugador in jugadores)
+                {
+                    datos.Rows.Add(
+                        (string)jugador["nombre"],
+                        (int)jugador["jugadas"],
+                        (int)jugador["ganadas"],
+                        (int)jugador["perdidas"]
+                    );
+                }
+
+                using (var ventana = new Form())
+                {
+                    ventana.Text = "Historial de partidas";
+                    ventana.ClientSize = new Size(750, 470);
+                    ventana.MinimumSize = new Size(600, 400);
+                    ventana.StartPosition = FormStartPosition.CenterParent;
+                    ventana.BackColor = RosaFondo1;
+                    ventana.ShowInTaskbar = false;
+
+                    var titulo = new Label
+                    {
+                        Text = "Historial de jugadores",
+                        Dock = DockStyle.Top,
+                        Height = 65,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        Font = new Font("Segoe UI", 21, FontStyle.Bold),
+                        ForeColor = Texto
+                    };
+
+                    var tabla = new DataGridView
+                    {
+                        Dock = DockStyle.Fill,
+                        DataSource = datos,
+                        ReadOnly = true,
+                        AllowUserToAddRows = false,
+                        AllowUserToDeleteRows = false,
+                        AllowUserToResizeRows = false,
+                        RowHeadersVisible = false,
+                        AutoSizeColumnsMode =
+                            DataGridViewAutoSizeColumnsMode.Fill,
+                        SelectionMode =
+                            DataGridViewSelectionMode.FullRowSelect,
+                        MultiSelect = false,
+                        BackgroundColor = Color.FromArgb(255, 250, 245),
+                        BorderStyle = BorderStyle.None,
+                        EnableHeadersVisualStyles = false,
+                        ColumnHeadersHeight = 40,
+                        ColumnHeadersHeightSizeMode =
+                            DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
+                        Font = new Font("Segoe UI", 12)
+                    };
+
+                    tabla.ColumnHeadersDefaultCellStyle.BackColor = Rosa;
+                    tabla.ColumnHeadersDefaultCellStyle.ForeColor = Texto;
+                    tabla.ColumnHeadersDefaultCellStyle.Font =
+                        new Font("Segoe UI", 12, FontStyle.Bold);
+
+                    tabla.DefaultCellStyle.BackColor = RosaFondo1;
+                    tabla.DefaultCellStyle.ForeColor = Texto;
+                    tabla.DefaultCellStyle.SelectionBackColor = Lila;
+                    tabla.DefaultCellStyle.SelectionForeColor = Texto;
+                    tabla.AlternatingRowsDefaultCellStyle.BackColor =
+                        Color.FromArgb(255, 240, 225);
+                    tabla.RowTemplate.Height = 35;
+
+                    var pie = new Panel
+                    {
+                        Dock = DockStyle.Bottom,
+                        Height = 80
+                    };
+
+                    var estado = new Label
+                    {
+                        Text = datos.Rows.Count == 0
+                            ? "Todavía no hay jugadores registrados."
+                            : "Resultados de partidas terminadas.",
+                        AutoSize = true,
+                        ForeColor = Texto,
+                        Location = new Point(15, 30)
+                    };
+
+                    var cerrar = new BotonPastel
+                    {
+                        Text = "Volver",
+                        ColorBase = Lila,
+                        ColorTexto = Texto,
+                        Size = new Size(160, 60),
+                        Location = new Point(575, 10),
+                        Anchor = AnchorStyles.Top | AnchorStyles.Right
+                    };
+
+                    cerrar.Click += (s, e) => ventana.Close();
+
+                    pie.Controls.Add(estado);
+                    pie.Controls.Add(cerrar);
+
+                    ventana.Controls.Add(tabla);
+                    ventana.Controls.Add(titulo);
+                    ventana.Controls.Add(pie);
+
+                    ventana.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!IsDisposed)
+                {
+                    MessageBox.Show(
+                        this,
+                        "No se pudo cargar el historial.\n" +
+                        "Comprueba que la API y MySQL estén funcionando.\n\n" +
+                        ex.Message,
+                        "Historial",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                }
+            }
+            finally
+            {
+                if (!IsDisposed)
+                    btnHistorial.Enabled = true;
+            }
         }
 
         void MostrarReglas()

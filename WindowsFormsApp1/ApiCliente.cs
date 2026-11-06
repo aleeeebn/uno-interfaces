@@ -36,8 +36,12 @@ namespace WindowsFormsApp1
 
         public static async Task<string> ObtenerHistorial()
         {
-            HttpResponseMessage respuesta = await cliente.GetAsync(BaseUrl + "/historial");
-            return await respuesta.Content.ReadAsStringAsync();
+            using (HttpResponseMessage respuesta =
+                   await cliente.GetAsync(BaseUrl + "/historial"))
+            {
+                respuesta.EnsureSuccessStatusCode();
+                return await respuesta.Content.ReadAsStringAsync();
+            }
         }
         public static async Task RegistrarMovimiento(int idPartida, int idJugador, string accion, string color = null, int? valor = null)
             {
