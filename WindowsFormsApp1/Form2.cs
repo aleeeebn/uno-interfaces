@@ -996,7 +996,6 @@ namespace WindowsFormsApp1
             }
             catch { idPartida = 0; }
         }
-
         int IdDe(Jugador j)
         {
             return idsJugadores[partida.getJugadores().IndexOf(j)];
