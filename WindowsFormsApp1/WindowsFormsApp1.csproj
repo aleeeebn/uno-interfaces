@@ -54,6 +54,7 @@
     <Compile Include="ApiCliente.cs" />
     <Compile Include="Carta.cs" />
     <Compile Include="CartasJuego.cs" />
+    <Compile Include="ClienteTcp.cs" />
     <Compile Include="ConexionTcp.cs" />
     <Compile Include="Form2.cs" />
     <Compile Include="Form2.Designer.cs">
