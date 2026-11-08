@@ -1041,6 +1041,7 @@ namespace WindowsFormsApp1
 
             FormClosed += (s, e) =>
             {
+                if (crearServidor) AbandonarPartidaBD();
                 cerrandoRed = true;
                 clienteRed?.Dispose();
                 servidorRed?.Dispose();
@@ -1094,7 +1095,13 @@ namespace WindowsFormsApp1
             int ganadorId = IdDe(ganador);
             colaApi = Encolar(colaApi, () => ApiCliente.TerminarPartida(partidaId, ganadorId));
         }
-
+        void AbandonarPartidaBD()
+        {
+            if (idPartida == 0) return;
+            int id = idPartida;
+            idPartida = 0;
+            colaApi = Encolar(colaApi, () => ApiCliente.AbandonarPartida(id));
+        }
 
         void NuevaPartida()
         {

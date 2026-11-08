@@ -33,6 +33,10 @@ namespace WindowsFormsApp1
             await cliente.PostAsync(
                 BaseUrl + "/partidas/" + idPartida + "/terminar?id_ganador=" + idGanador, null);
         }
+        public static async Task AbandonarPartida(int idPartida)
+        {
+            await cliente.PostAsync(BaseUrl + "/partidas/" + idPartida + "/abandonar", null);
+        }
 
         public static async Task<string> ObtenerHistorial()
         {
