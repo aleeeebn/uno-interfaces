@@ -100,3 +100,15 @@ def historial():
     for fila in datos:
         fila["perdidas"] = fila["jugadas"] - fila["ganadas"]
     return datos
+
+@app.post("/partidas/{id_partida}/abandonar")
+def abandonar_partida(id_partida: int):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute(
+        "UPDATE partidas SET fecha_fin = NOW(), estado = 'abandonada' "
+        "WHERE id_partida = %s AND estado = 'en_curso'", (id_partida,)
+    )
+    conexion.commit()
+    conexion.close()
+    return {"id_partida": id_partida, "estado": "abandonada"}
