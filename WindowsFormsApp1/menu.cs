@@ -600,7 +600,7 @@ namespace WindowsFormsApp1
                         fuente, pincel, ClientSize.Width / 2 - 100, cap.Bottom + 8);
                 }
 
-                // CAMBIO 3: Se agregó un mensaje en la parte inferior.
+               
                 using (var fuente = new Font("Segoe UI", 9, FontStyle.Regular))
                 using (var pincel = new SolidBrush(Texto))
                 {
