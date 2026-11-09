@@ -599,6 +599,14 @@ namespace WindowsFormsApp1
                     g.DrawString("¡Diviértete jugando UNO!",
                         fuente, pincel, ClientSize.Width / 2 - 100, cap.Bottom + 8);
                 }
+
+                // CAMBIO 3: Se agregó un mensaje en la parte inferior.
+                using (var fuente = new Font("Segoe UI", 9, FontStyle.Regular))
+                using (var pincel = new SolidBrush(Texto))
+                {
+                    g.DrawString("¡Que comience la partida!",
+                        fuente, pincel, 20, ClientSize.Height - 30);
+                }
             }
         }
     }
