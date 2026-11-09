@@ -591,6 +591,14 @@ namespace WindowsFormsApp1
             {
                 var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
                 g.DrawString("¡Bienvenido!", f, br, cap, sf);
+                
+                
+                using (var fuente = new Font("Segoe UI", 10, FontStyle.Italic))
+                using (var pincel = new SolidBrush(Texto))
+                {
+                    g.DrawString("¡Diviértete jugando UNO!",
+                        fuente, pincel, ClientSize.Width / 2 - 100, cap.Bottom + 8);
+                }
             }
         }
     }
