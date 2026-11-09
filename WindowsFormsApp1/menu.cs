@@ -25,7 +25,8 @@ namespace WindowsFormsApp1
         TextBox[] nombres = new TextBox[3];
         public Menu()
         {
-            Text = "UNO";
+            
+            Text = "UNO - Juego de cartas";
             ClientSize = new Size(1100, 740);
             MinimumSize = new Size(900, 640);
             StartPosition = FormStartPosition.CenterScreen;
